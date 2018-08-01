@@ -91,8 +91,8 @@
         </c:if>
         <tr>
             <td>
-                <form:label path="Requested IP address">
-                    <spring:message text="requestedIpAddress"/>
+                <form:label path="requestedIpAddress">
+                    <spring:message text="Requested IP address"/>
                 </form:label>
             </td>
             <td>
@@ -101,8 +101,8 @@
         </tr>
         <tr>
             <td>
-                <form:label path="requested domain address">
-                    <spring:message text="requestedDomainAddress"/>
+                <form:label path="requestedDomainAddress">
+                    <spring:message text="Requested domain address"/>
                 </form:label>
             </td>
             <td>
@@ -112,8 +112,8 @@
 
         <tr>
             <td>
-                <form:label path="Start date">
-                    <spring:message text="startDate"/>
+                <form:label path="startDate">
+                    <spring:message text="Start date"/>
                 </form:label>
             </td>
             <td>
@@ -122,8 +122,8 @@
         </tr>
         <tr>
             <td>
-                <form:label path="End date">
-                    <spring:message text="endDate"/>
+                <form:label path="endDate">
+                    <spring:message text="End eate"/>
                 </form:label>
             </td>
             <td>
