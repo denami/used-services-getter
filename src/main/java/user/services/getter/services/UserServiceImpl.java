@@ -1,11 +1,17 @@
 package user.services.getter.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import user.services.getter.dao.UserDao;
 import user.services.getter.model.Role;
 import user.services.getter.model.User;
 
 import java.util.Collection;
 
 public class UserServiceImpl implements UserService {
+
+    @Autowired
+    UserDao userDao;
+
     @Override
     public User getUserById(Integer id) {
         return null;
@@ -13,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByLogin(String login) {
-        return null;
+        return userDao.getUserByName(login);
     }
 
     @Override

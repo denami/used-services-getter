@@ -8,12 +8,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import user.services.getter.model.Role;
 import user.services.getter.services.UserService;
 
 import java.util.*;
 
-@Component
+@Service("authService")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired

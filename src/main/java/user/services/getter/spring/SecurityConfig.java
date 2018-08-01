@@ -1,7 +1,6 @@
 package user.services.getter.spring;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -13,15 +12,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 
+import javax.annotation.Resource;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    @Resource(name="authService")
     private UserDetailsService userDetailsService;
 
-    @Autowired
-    public void configAuthentication(AuthenticationManagerBuilder auth) throws Exception {
+    @Override
+    public void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
@@ -36,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         HttpSessionCsrfTokenRepository repository =
                 new HttpSessionCsrfTokenRepository();
 
-        repository.setHeaderName("X-XSRF-TOKEN");
+        repository.setHeaderName("_csrf");
         return repository;
     }
 

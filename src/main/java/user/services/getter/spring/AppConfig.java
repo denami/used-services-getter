@@ -6,8 +6,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.core.convert.support.DefaultConversionService;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import user.services.getter.bean.UserDetailsServiceImpl;
 import user.services.getter.services.RequestService;
 import user.services.getter.services.RequestServiceImpl;
 import user.services.getter.services.UserService;
@@ -38,5 +40,8 @@ public class AppConfig {
     public RequestService getRequestService() {
         return new RequestServiceImpl();
     }
+
+    @Bean
+    public UserDetailsService getUserDetailsService(){return new UserDetailsServiceImpl();}
 
 }
