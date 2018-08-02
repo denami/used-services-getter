@@ -15,6 +15,8 @@ repositories {
 gretty {
     httpPort = 8090
     contextPath = '/'
+    debugPort = 5005      // default
+    debugSuspend = true   // default
 }
 
 ext {
