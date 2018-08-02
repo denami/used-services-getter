@@ -20,6 +20,9 @@ public class Request {
     private Collection<String> requestedIpAddress;
     private Collection<String> requestedDomainAddress;
 
+    private String requestedIpAddressComaList;
+    private String requestedDomainAddressComaList;
+
     public Integer getId() {
         return id;
     }
@@ -56,17 +59,25 @@ public class Request {
     public Collection<String> getRequestedIpAddress() {
         return requestedIpAddress;
     }
+    public String getRequestedIpAddressComaList() {
+        return String.join(",", requestedIpAddress);
+    }
 
     public void setRequestedIpAddress(Collection<String> requestedIpAddress) {
         this.requestedIpAddress = requestedIpAddress;
+        this.requestedIpAddressComaList = getRequestedIpAddressComaList();
     }
 
     public Collection<String> getRequestedDomainAddress() {
         return requestedDomainAddress;
     }
+    public String getRequestedDomainAddressComaList() {
+        return String.join(",", requestedDomainAddress);
+    }
 
     public void setRequestedDomainAddress(Collection<String> requestedDomainAddress) {
         this.requestedDomainAddress = requestedDomainAddress;
+        this.requestedDomainAddressComaList = getRequestedDomainAddressComaList();
     }
 
     public LocalDateTime getCreateDateTime() {
@@ -85,8 +96,10 @@ public class Request {
                 ", status=" + status +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", requestedIpAddress=" + requestedIpAddress +
-                ", requestedDomainAddress=" + requestedDomainAddress +
+                ", requestedIpAddress=" + requestedIpAddressComaList +
+                ", requestedDomainAddress=" + requestedDomainAddressComaList +
                 '}';
     }
+
+
 }

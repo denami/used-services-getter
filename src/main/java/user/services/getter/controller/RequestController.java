@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import user.services.getter.model.Request;
+import user.services.getter.model.RequestStatus;
 import user.services.getter.services.RequestService;
 
 @Controller
@@ -21,6 +23,13 @@ public class RequestController {
     public String listRequests(Model model){
         model.addAttribute("request", new Request());
         model.addAttribute("listRequests", this.requestService.getAllRequests());
+        return "requests_page";
+    }
+
+    @RequestMapping(value = "/edit", method = RequestMethod.POST)
+    public String editReqest(@ModelAttribute("request") Request request) {
+        request.setStatus(RequestStatus.PLANNED);
+        requestService.save(request);
         return "requests_page";
     }
 }

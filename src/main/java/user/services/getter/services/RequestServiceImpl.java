@@ -1,5 +1,7 @@
 package user.services.getter.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import user.services.getter.dao.RequestDao;
 import user.services.getter.model.Request;
 import user.services.getter.model.RequestStatus;
 
@@ -7,6 +9,10 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 
 public class RequestServiceImpl implements RequestService {
+
+    @Autowired
+    RequestDao requestDao;
+
     @Override
     public RequestStatus getRequestStatus(Request request) {
         return null;
@@ -29,12 +35,13 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public Request save(Request request) {
+        requestDao.saveRequest(request);
         return getRequestByCreateDataTime(request.getCreateDateTime());
     }
 
     @Override
     public Collection<Request> getAllRequests() {
-        return null;
+        return requestDao.getAllRequests();
     }
 
     @Override

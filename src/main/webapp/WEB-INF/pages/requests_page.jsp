@@ -51,19 +51,27 @@
 <br/>
 <br/>
 
-<h1>Book List</h1>
+<h1>Requests List</h1>
 
 <c:if test="${!empty listRequests}">
     <table class="tg">
         <tr>
             <th width="80">ID</th>
             <th width="120">Create time</th>
+            <th width="100">Start date</th>
+            <th width="100">End date</th>
+            <th width="120">Requested IP address</th>
+            <th width="120">Requested domain address</th>
             <th width="120">Status</th>
         </tr>
         <c:forEach items="${listRequests}" var="request">
             <tr>
                 <td><a href="/request/getRequestById/${request.id}" target="_blank">${request.id}</a></td>
                 <td>${request.createDateTime}</td>
+                <td>${request.startDate}</td>
+                <td>${request.endDate}</td>
+                <td>${request.requestedIpAddressComaList}</td>
+                <td>${request.requestedDomainAddressComaList}</td>
                 <td>${request.status}</td>
             </tr>
         </c:forEach>
