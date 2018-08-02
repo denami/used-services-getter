@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         user.services.getter.model.User user = userService.getUserByLogin(username);
         List<GrantedAuthority> authorities = buildUserAuthority(userService.getUserRoles(user));
 
-        return null;
+        return buildUserForAuthentication(user,authorities);
     }
 
     private UserDetails buildUserForAuthentication(user.services.getter.model.User user,

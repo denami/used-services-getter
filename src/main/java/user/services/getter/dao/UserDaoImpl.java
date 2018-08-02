@@ -3,6 +3,7 @@ package user.services.getter.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import user.services.getter.JDBCTemplate.UserJDBCTemplate;
+import user.services.getter.model.Role;
 import user.services.getter.model.User;
 
 import java.util.Collection;
@@ -26,5 +27,15 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getUserById(Integer id) {
         return userJDBCTemplate.getUserById(id);
+    }
+
+    @Override
+    public Collection<Role> getUserRoles(User user) {
+        return userJDBCTemplate.getUserRoles(user);
+    }
+
+    @Override
+    public Collection<User> getUsersWithRole(Role role) {
+        return null;
     }
 }

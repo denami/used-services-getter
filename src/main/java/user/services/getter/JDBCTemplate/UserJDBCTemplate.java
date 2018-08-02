@@ -15,6 +15,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 
 @Component
@@ -59,7 +61,20 @@ public class UserJDBCTemplate implements UserService {
 
     @Override
     public Collection<Role> getUserRoles(User user) {
-        return null;
+        String SQL = "SELECT name FROM getter_role WHERE user_id = ?";
+        List<Role> roles = jdbcTemplate.query(SQL, new Object[]{user.getId()}, new RowMapper<Role>() {
+            @Override
+            public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
+                Role role = new Role();
+                role.setRolename(rs.getString("name"));
+                return role;
+            }
+        });
+
+        Collection<Role> rolesCollection = new HashSet<>();
+        rolesCollection.addAll(roles);
+
+        return rolesCollection;
     }
 
     @Override
