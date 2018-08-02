@@ -30,7 +30,7 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public Request getRequestById(Integer id) {
-        return null;
+        return requestDao.getRequestById(id);
     }
 
     @Override
@@ -48,4 +48,15 @@ public class RequestServiceImpl implements RequestService {
     public Request getRequestByCreateDataTime(LocalDateTime localDateTime) {
         return null;
     }
+
+    @Override
+    public Collection<Request> getAllRequestsByStatus(RequestStatus requestStatus) {
+        return null;
+    }
+
+    @Override
+    public Request getRequestByStatus(RequestStatus requestStatus) {
+        return requestDao.getRequestByStatus(requestStatus);
+    }
+
 }

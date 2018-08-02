@@ -6,7 +6,10 @@ public enum RequestStatus {
     DONE,
     ABORTED,
     PARSING,
-    BUILD,
+    PARSED,
+    BUILDING,
     ERROR,
-    PLANNED
+    SCHEDULED,
+    PLANNED,
+    FAIL
 }

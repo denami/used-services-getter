@@ -13,7 +13,9 @@ public class PropertiesConfig{
         PropertyPlaceholderConfigurer configurer = new PropertyPlaceholderConfigurer();
 
         configurer.setLocations(
-                new ClassPathResource("properties/db.properties")
+                new ClassPathResource("properties/db.properties"),
+                new ClassPathResource("properties/nfdump.properties"),
+                new ClassPathResource("properties/threadPool.properties")
         );
 
         configurer.setSystemPropertiesModeName("SYSTEM_PROPERTIES_MODE_OVERRIDE");

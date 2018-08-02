@@ -40,7 +40,6 @@ public class Request {
         this.status = status;
     }
 
-
     public LocalDate getStartDate() {
         return startDate;
     }
@@ -60,6 +59,7 @@ public class Request {
     public Collection<String> getRequestedIpAddress() {
         return requestedIpAddress;
     }
+
     public String getRequestedIpAddressComaList() {
         return String.join(",", requestedIpAddress);
     }
@@ -72,6 +72,7 @@ public class Request {
     public Collection<String> getRequestedDomainAddress() {
         return requestedDomainAddress;
     }
+
     public String getRequestedDomainAddressComaList() {
         return String.join(",", requestedDomainAddress);
     }
@@ -101,7 +102,6 @@ public class Request {
                 ", requestedDomainAddress=" + requestedDomainAddressComaList +
                 '}';
     }
-
 
     @Override
     public boolean equals(Object o) {
