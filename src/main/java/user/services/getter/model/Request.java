@@ -3,6 +3,7 @@ package user.services.getter.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Objects;
 
 public class Request {
 
@@ -102,4 +103,22 @@ public class Request {
     }
 
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Request request = (Request) o;
+        return Objects.equals(id, request.id) &&
+                Objects.equals(createDateTime, request.createDateTime) &&
+                status == request.status &&
+                Objects.equals(startDate, request.startDate) &&
+                Objects.equals(endDate, request.endDate) &&
+                Objects.equals(requestedIpAddress, request.requestedIpAddress) &&
+                Objects.equals(requestedDomainAddress, request.requestedDomainAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, createDateTime, status, startDate, endDate, requestedIpAddress, requestedDomainAddress);
+    }
 }

@@ -30,6 +30,6 @@ public class RequestController {
     public String editReqest(@ModelAttribute("request") Request request) {
         request.setStatus(RequestStatus.PLANNED);
         requestService.save(request);
-        return "requests_page";
+        return "redirect:/request";
     }
 }
