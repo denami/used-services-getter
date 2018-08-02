@@ -56,10 +56,10 @@
 <c:if test="${!empty listRequests}">
     <table class="tg">
         <tr>
-            <th width="80">ID</th>
+            <th width="30">ID</th>
             <th width="120">Create time</th>
-            <th width="100">Start date</th>
-            <th width="100">End date</th>
+            <th width="80">Start date</th>
+            <th width="80">End date</th>
             <th width="120">Requested IP address</th>
             <th width="120">Requested domain address</th>
             <th width="120">Status</th>
