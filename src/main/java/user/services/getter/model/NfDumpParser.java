@@ -3,6 +3,7 @@ package user.services.getter.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import user.services.getter.services.RequestService;
@@ -15,12 +16,16 @@ public class NfDumpParser implements Runnable {
 
     private static final Logger log = LoggerFactory.getLogger(NfDumpParser.class);
 
+    @Value("${nfdump.base.dir}")
+    String dataDir;
+
+    @Value("${nfdump.path}")
+    String nfDumpPath;
+
     @Autowired
     RequestService requestService;
 
     String fileName;
-    String databaseDir;
-    String nfDumpPath;
     Integer id;
 
     public String getNfDumpPath() {
@@ -47,18 +52,18 @@ public class NfDumpParser implements Runnable {
         this.id = id;
     }
 
-    public String getDatabaseDir() {
-        return databaseDir;
+    public String getDataDir() {
+        return dataDir;
     }
 
     public void setDataBaseDir(String databaseDir) {
-        this.databaseDir = databaseDir;
+        this.dataDir = databaseDir;
     }
 
     @Override
     public void run() {
         Runtime rt = java.lang.Runtime.getRuntime();
-        String[] commands = {nfDumpPath, "-r", databaseDir + "/" + fileName};
+        String[] commands = {nfDumpPath, "-r", dataDir + "/" + fileName + "-o pipe" };
         Integer exitCode = -1;
 
         Request request = requestService.getRequestById(id);
@@ -69,7 +74,6 @@ public class NfDumpParser implements Runnable {
             Process p = rt.exec(commands);
             p.waitFor();
             exitCode=p.exitValue();
-            p.destroy();
         } catch (IOException e) {
             log.error(e.getLocalizedMessage());
         } catch (InterruptedException e) {

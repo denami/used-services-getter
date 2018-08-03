@@ -14,11 +14,6 @@ public class RequestServiceImpl implements RequestService {
     RequestDao requestDao;
 
     @Override
-    public RequestStatus getRequestStatus(Request request) {
-        return null;
-    }
-
-    @Override
     public void SetRequestStatus(Request request, RequestStatus requestStatus) {
 
     }

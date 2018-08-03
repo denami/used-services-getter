@@ -26,7 +26,7 @@ public class RequestDaoImpl implements RequestDao {
     }
 
     @Override
-    public Request getRequestByCreteDate(LocalDate date) {
+    public Request getRequestByCreateDate(LocalDate date) {
         return null;
     }
 

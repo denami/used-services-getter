@@ -11,5 +11,7 @@ public enum RequestStatus {
     ERROR,
     SCHEDULED,
     PLANNED,
-    FAIL
+    FAIL,
+    PREPARATION,
+    PREPARED
 }

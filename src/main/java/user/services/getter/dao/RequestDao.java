@@ -9,7 +9,7 @@ import java.util.Collection;
 public interface RequestDao {
     public Collection<Request> getAllRequests();
     public Request getRequestById(Integer id);
-    public Request getRequestByCreteDate(LocalDate date);
+    public Request getRequestByCreateDate(LocalDate date);
     public Request getRequestByStatus(RequestStatus requestStatus);
     public Request saveRequest(Request request);
 
