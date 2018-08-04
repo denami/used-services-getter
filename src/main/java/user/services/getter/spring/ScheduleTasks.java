@@ -66,6 +66,7 @@ public class ScheduleTasks {
                 NfDumpParser nfDumpParser=applicationContext.getBean(NfDumpParser.class);
                 logger.info("Add {} to thread", taskName);
                 nfDumpParser.setId(request.getId());
+                nfDumpParser.setFiles(requestExecutionInfoService.getInfoByRequestId(request.getId()).getNfFiles());
                 threadPoolTaskExecutor.execute(nfDumpParser);
             }
         }

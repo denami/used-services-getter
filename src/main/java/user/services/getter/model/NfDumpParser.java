@@ -77,7 +77,7 @@ public class NfDumpParser implements Runnable {
 
         for (String file : files) {
             Runtime rt = Runtime.getRuntime();
-            String[] commands = {nfDumpPath, "-r", dataDir + "/" + file + "-o pipe"};
+            String[] commands = {nfDumpPath, "-r", dataDir + "/" + file, "-o", "pipe", "-q"};
 
             try {
                 Process p = rt.exec(commands);
@@ -119,7 +119,6 @@ public class NfDumpParser implements Runnable {
             request.setStatus(RequestStatus.PARSED);
             requestService.save(request);
         }
-
     }
 }
 
