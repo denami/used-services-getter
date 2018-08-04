@@ -6,9 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import user.services.getter.services.RequestExecutionInfoService;
 import user.services.getter.services.RequestService;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Collection;
 
 @Component
 @Scope("prototype")
@@ -25,7 +29,10 @@ public class NfDumpParser implements Runnable {
     @Autowired
     RequestService requestService;
 
-    String fileName;
+    @Autowired
+    RequestExecutionInfoService requestExecutionInfoService;
+
+    Collection<String> files;
     Integer id;
 
     public String getNfDumpPath() {
@@ -36,12 +43,12 @@ public class NfDumpParser implements Runnable {
         this.nfDumpPath = nfDumpPath;
     }
 
-    public String getFileName() {
-        return fileName;
+    public Collection<String> getFiles() {
+        return files;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFiles(Collection<String> files) {
+        this.files = files;
     }
 
     public Integer getId() {
@@ -62,34 +69,57 @@ public class NfDumpParser implements Runnable {
 
     @Override
     public void run() {
-        Runtime rt = java.lang.Runtime.getRuntime();
-        String[] commands = {nfDumpPath, "-r", dataDir + "/" + fileName + "-o pipe" };
-        Integer exitCode = -1;
-
+        StringBuilder sb = new StringBuilder();
+        Integer exitCode = 0;
         Request request = requestService.getRequestById(id);
         request.setStatus(RequestStatus.PARSING);
         requestService.save(request);
 
-        try {
-            Process p = rt.exec(commands);
-            p.waitFor();
-            exitCode=p.exitValue();
-        } catch (IOException e) {
-            log.error(e.getLocalizedMessage());
-        } catch (InterruptedException e) {
-            log.warn(e.getLocalizedMessage());
-        } finally {
-            if(exitCode!=0){
-                request.setStatus(RequestStatus.FAIL);
-                log.info("NfDumpParser complete successful:{}", id);
-            } else {
-                request.setStatus(RequestStatus.PARSED);
+        for (String file : files) {
+            Runtime rt = Runtime.getRuntime();
+            String[] commands = {nfDumpPath, "-r", dataDir + "/" + file + "-o pipe"};
+
+            try {
+                Process p = rt.exec(commands);
+                p.waitFor();
+                BufferedReader stdInput = new BufferedReader(new
+                        InputStreamReader(p.getInputStream()));
+
+                BufferedReader stdError = new BufferedReader(new
+                        InputStreamReader(p.getErrorStream()));
+
+                String s = null;
+                if (p.exitValue() != 0) {
+                    exitCode = p.exitValue();
+                    while ((s = stdInput.readLine()) != null) {
+                        sb.append(s);
+                    }
+                }
+                if (p.exitValue() != 0) {
+                    exitCode = p.exitValue();
+                    while ((s = stdError.readLine()) != null) {
+                        sb.append(s);
+                    }
+                }
+            } catch (IOException e) {
+                log.error(e.getLocalizedMessage());
+            } catch (InterruptedException e) {
+                log.warn(e.getLocalizedMessage());
+            } finally {
+                if (exitCode != 0) {
+                    request.setStatus(RequestStatus.FAIL);
+                    log.info("NfDumpParser complete successful:{}", id);
+                    RequestExecutionInfo info = requestExecutionInfoService.getInfoByRequestId(request.getId());
+                    info.setMessage(sb.toString());
+                    requestExecutionInfoService.save(info);
+                }
             }
+        }
+        if (exitCode == 0) {
+            request.setStatus(RequestStatus.PARSED);
             requestService.save(request);
         }
 
-        if (exitCode==0) {
-
-        }
     }
 }
+
