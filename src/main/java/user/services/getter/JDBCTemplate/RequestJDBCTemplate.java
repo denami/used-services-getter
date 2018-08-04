@@ -3,6 +3,7 @@ package user.services.getter.JDBCTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -194,7 +195,12 @@ public class RequestJDBCTemplate implements RequestService {
                 ",requested_ip" +
                 ",requested_domains" +
                 ",description FROM getter_request WHERE status = ? LIMIT 1";
-        return jdbcTemplate.queryForObject(SQL, new Object[]{requestStatus.toString()}, new RequestRowMapper());
+        try {
+            return jdbcTemplate.queryForObject(SQL, new Object[]{requestStatus.toString()}, new RequestRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            logger.info("No request with status: ", requestStatus.toString());
+        }
+        return null;
     }
 
     private class RequestRowMapper implements RowMapper<Request> {
