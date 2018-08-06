@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Collection;
+import java.util.HashSet;
 
 @Component
 @Scope("prototype")
@@ -61,20 +62,24 @@ public class NfDumpParser implements Runnable {
 
     private String getIpGrepString(Collection<String> ipAddresses) {
         StringBuilder sb = new StringBuilder();
+        Collection<String> grepIps = new HashSet<String>();
 
         if (ipAddresses != null){
             for (String s : ipAddresses){
                 Long longIp = ipToLong(s);
                 if (longIp != 0) {
-                    sb.append("\\|");
-                    sb.append(longIp.toString());
-                    sb.append("\\|");
+                    StringBuilder regexpIpElement = new StringBuilder("\\|");
+                    regexpIpElement.append(longIp);
+                    regexpIpElement.append("\\|");
+                    grepIps.add(regexpIpElement.toString());
                 }
             }
 
-            if (sb.toString().length()>0){
+            if ( grepIps.size()>0){
+                sb.append("(");
+                sb.append(String.join("|", grepIps));
                 sb.append(")");
-                return "(".concat(sb.toString());
+                return sb.toString();
             }
         }
         return null;
