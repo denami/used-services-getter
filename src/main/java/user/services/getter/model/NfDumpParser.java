@@ -23,8 +23,8 @@ public class NfDumpParser implements Runnable {
     @Value("${nfdump.base.dir}")
     String dataDir;
 
-    @Value("${nfdump.path}")
-    String nfDumpPath;
+    @Value("${nfdump.parser.path}")
+    String nfDumpParserPath;
 
     @Autowired
     RequestService requestService;
@@ -34,14 +34,6 @@ public class NfDumpParser implements Runnable {
 
     Collection<String> files;
     Integer id;
-
-    public String getNfDumpPath() {
-        return nfDumpPath;
-    }
-
-    public void setNfDumpPath(String nfDumpPath) {
-        this.nfDumpPath = nfDumpPath;
-    }
 
     public Collection<String> getFiles() {
         return files;
@@ -63,8 +55,44 @@ public class NfDumpParser implements Runnable {
         return dataDir;
     }
 
-    public void setDataBaseDir(String databaseDir) {
-        this.dataDir = databaseDir;
+    public void setDataDir(String dataDir) {
+        this.dataDir = dataDir;
+    }
+
+    private String getIpGrepString(Collection<String> ipAddresses) {
+        StringBuilder sb = new StringBuilder();
+
+        if (ipAddresses != null){
+            for (String s : ipAddresses){
+                Long longIp = ipToLong(s);
+                if (longIp != 0) {
+                    sb.append("\\|");
+                    sb.append(longIp.toString());
+                    sb.append("\\|");
+                }
+            }
+
+            if (sb.toString().length()>0){
+                sb.append(")");
+                return "(".concat(sb.toString());
+            }
+        }
+        return null;
+    }
+
+    private Long ipToLong(String ipAddress) {
+        String[] ipAddressInArray = ipAddress.split("\\.");
+        Long result = 0L;
+
+        if (ipAddressInArray.length == 4) {
+            for (Integer i = 0; i < ipAddressInArray.length; i++) {
+                Integer power = 3 - i;
+                Integer ip = Integer.parseInt(ipAddressInArray[i]);
+                Double partResult = (ip * Math.pow(256, power));
+                result += partResult.longValue();
+            }
+        }
+        return result;
     }
 
     @Override
@@ -74,10 +102,18 @@ public class NfDumpParser implements Runnable {
         Request request = requestService.getRequestById(id);
         request.setStatus(RequestStatus.PARSING);
         requestService.save(request);
+        Collection<String> ipAddresses = request.getRequestedIpAddress();
+        String grepIntIpAddresses = "\\|";
+        if (ipAddresses != null){
+            grepIntIpAddresses = getIpGrepString(ipAddresses);
+        }
 
         for (String file : files) {
             Runtime rt = Runtime.getRuntime();
-            String[] commands = {nfDumpPath, "-r", dataDir + "/" + file, "-o", "pipe", "-q"};
+            String[] commands = {nfDumpParserPath,
+                    dataDir,
+                    file,
+                    grepIntIpAddresses};
 
             try {
                 Process p = rt.exec(commands);
@@ -119,6 +155,14 @@ public class NfDumpParser implements Runnable {
             request.setStatus(RequestStatus.PARSED);
             requestService.save(request);
         }
+    }
+
+    public String getNfDumpParserPath() {
+        return nfDumpParserPath;
+    }
+
+    public void setNfDumpParserPath(String nfDumpParserPath) {
+        this.nfDumpParserPath = nfDumpParserPath;
     }
 }
 
