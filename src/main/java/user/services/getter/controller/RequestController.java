@@ -28,7 +28,7 @@ public class RequestController {
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)
     public String editReqest(@ModelAttribute("request") Request request) {
-        request.setStatus(RequestStatus.SCHEDULED);
+        request.setStatus(RequestStatus.PLANNED);
         requestService.save(request);
         return "redirect:/request";
     }
