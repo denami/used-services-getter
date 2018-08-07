@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-import user.services.getter.model.FileListUpdater;
+import user.services.getter.model.FileUpdateUtil;
 
 @Component
 public class ScheduleFieUpdate {
@@ -24,8 +24,8 @@ public class ScheduleFieUpdate {
     public void updateFileList() {
         if (threadPoolTaskExecutor.getMaxPoolSize() - threadPoolTaskExecutor.getActiveCount() > 0) {
             logger.debug("Update file list");
-            FileListUpdater fileListUpdater = applicationContext.getBean(FileListUpdater.class);
-            threadPoolTaskExecutor.execute(fileListUpdater);
+            FileUpdateUtil fileUpdateUtil = applicationContext.getBean(FileUpdateUtil.class);
+            threadPoolTaskExecutor.execute(fileUpdateUtil);
         }
     }
 }

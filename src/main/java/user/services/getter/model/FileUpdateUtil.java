@@ -12,7 +12,7 @@ import java.util.HashSet;
 
 @Component
 @Scope("prototype")
-public class FileListUpdater implements Runnable {
+public class FileUpdateUtil implements Runnable {
 
     @Value("${nfdump.base.dir}")
     String dataDir;

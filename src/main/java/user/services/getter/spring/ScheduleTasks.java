@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-import user.services.getter.model.NfDumpParser;
+import user.services.getter.model.NfDumpUtil;
 import user.services.getter.model.Request;
 import user.services.getter.model.RequestExecutionInfo;
 import user.services.getter.model.RequestStatus;
@@ -63,12 +63,12 @@ public class ScheduleTasks {
             Request request = requestService.getRequestByStatus(RequestStatus.PREPARED);
             if (request != null) {
                 String taskName = request.getId() + "-" + request.getStatus().name();
-                NfDumpParser nfDumpParser=applicationContext.getBean(NfDumpParser.class);
+                NfDumpUtil nfDumpUtil =applicationContext.getBean(NfDumpUtil.class);
                 logger.info("Add {} to thread", taskName);
-                nfDumpParser.setId(request.getId());
+                nfDumpUtil.setRequest(request);
                 RequestExecutionInfo info = requestExecutionInfoService.getInfoByRequestId(request.getId());
-                nfDumpParser.setFiles(info.getNfFiles());
-                threadPoolTaskExecutor.execute(nfDumpParser);
+                nfDumpUtil.setFiles(info.getNfFiles());
+                threadPoolTaskExecutor.execute(nfDumpUtil);
             }
         }
     }

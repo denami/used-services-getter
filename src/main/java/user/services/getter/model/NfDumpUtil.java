@@ -17,9 +17,9 @@ import java.util.HashSet;
 
 @Component
 @Scope("prototype")
-public class NfDumpParser implements Runnable {
+public class NfDumpUtil implements Runnable {
 
-    private static final Logger log = LoggerFactory.getLogger(NfDumpParser.class);
+    private static final Logger log = LoggerFactory.getLogger(NfDumpUtil.class);
 
     @Value("${nfdump.base.dir}")
     String dataDir;
@@ -35,6 +35,7 @@ public class NfDumpParser implements Runnable {
 
     Collection<String> files;
     Integer id;
+    private Request request;
 
     public Collection<String> getFiles() {
         return files;
@@ -42,14 +43,6 @@ public class NfDumpParser implements Runnable {
 
     public void setFiles(Collection<String> files) {
         this.files = files;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getDataDir() {
@@ -104,7 +97,6 @@ public class NfDumpParser implements Runnable {
     public void run() {
         StringBuilder sb = new StringBuilder();
         Integer exitCode = 0;
-        Request request = requestService.getRequestById(id);
         request.setStatus(RequestStatus.PARSING);
         requestService.save(request);
         Collection<String> ipAddresses = request.getRequestedIpAddress();
@@ -118,7 +110,8 @@ public class NfDumpParser implements Runnable {
             String[] commands = {nfDumpParserPath,
                     dataDir,
                     file,
-                    grepIntIpAddresses};
+                    grepIntIpAddresses,
+                    request.getId().toString()};
 
             try {
                 Process p = rt.exec(commands);
@@ -149,7 +142,7 @@ public class NfDumpParser implements Runnable {
             } finally {
                 if (exitCode != 0) {
                     request.setStatus(RequestStatus.FAIL);
-                    log.error("NfDumpParser complete unsuccessful:{}", id);
+                    log.error("NfDumpUtil complete unsuccessful:{}", request.getId());
                     RequestExecutionInfo info = requestExecutionInfoService.getInfoByRequestId(request.getId());
                     sb.append("\\n");
                     if(info.getMessage() == null) {
@@ -162,7 +155,7 @@ public class NfDumpParser implements Runnable {
             }
         }
         if (exitCode == 0) {
-            log.info("NfDumpParser complete successful:{}", id);
+            log.info("NfDumpUtil complete successful:{}", id);
             request.setStatus(RequestStatus.PARSED);
             requestService.save(request);
 
@@ -175,5 +168,9 @@ public class NfDumpParser implements Runnable {
 
     public void setNfDumpParserPath(String nfDumpParserPath) {
         this.nfDumpParserPath = nfDumpParserPath;
+    }
+
+    public void setRequest(Request request) {
+        this.request=request;
     }
 }
