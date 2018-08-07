@@ -149,16 +149,23 @@ public class NfDumpParser implements Runnable {
             } finally {
                 if (exitCode != 0) {
                     request.setStatus(RequestStatus.FAIL);
-                    log.info("NfDumpParser complete successful:{}", id);
+                    log.error("NfDumpParser complete unsuccessful:{}", id);
                     RequestExecutionInfo info = requestExecutionInfoService.getInfoByRequestId(request.getId());
-                    info.setMessage(sb.toString());
+                    sb.append("\\n");
+                    if(info.getMessage() == null) {
+                        info.setMessage(sb.toString());
+                    } else {
+                        info.setMessage(info.getMessage().concat(sb.toString()));
+                    }
                     requestExecutionInfoService.save(info);
                 }
             }
         }
         if (exitCode == 0) {
+            log.info("NfDumpParser complete successful:{}", id);
             request.setStatus(RequestStatus.PARSED);
             requestService.save(request);
+
         }
     }
 
@@ -170,4 +177,3 @@ public class NfDumpParser implements Runnable {
         this.nfDumpParserPath = nfDumpParserPath;
     }
 }
-
