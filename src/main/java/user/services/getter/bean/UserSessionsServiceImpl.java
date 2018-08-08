@@ -36,6 +36,11 @@ public class UserSessionsServiceImpl implements UserSessionsService {
         return null;
     }
 
+    @Override
+    public Integer getAccountId(Long ip, LocalDateTime localDateTime) {
+        return getUserSession(ip, localDateTime).getUserId();
+    }
+
     private UserSession recieveFromDB(Long ip, LocalDateTime localDateTime) {
         return userSessionDao.getSession(ip, localDateTime);
     }

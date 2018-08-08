@@ -7,10 +7,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
-import user.services.getter.model.NfDumpUtil;
-import user.services.getter.model.Request;
-import user.services.getter.model.RequestExecutionInfo;
-import user.services.getter.model.RequestStatus;
+import user.services.getter.model.*;
 import user.services.getter.services.FileDateTimeMapperService;
 import user.services.getter.services.RequestExecutionInfoService;
 import user.services.getter.services.RequestService;
@@ -69,6 +66,17 @@ public class ScheduleTasks {
                 RequestExecutionInfo info = requestExecutionInfoService.getInfoByRequestId(request.getId());
                 nfDumpUtil.setFiles(info.getNfFiles());
                 threadPoolTaskExecutor.execute(nfDumpUtil);
+            }
+        }
+
+        if (threadPoolTaskExecutor.getMaxPoolSize() - threadPoolTaskExecutor.getActiveCount() > 0) {
+            Request request = requestService.getRequestByStatus(RequestStatus.PARSED);
+            if (request != null) {
+                String taskName = request.getId() + "-" + request.getStatus().name();
+                UserIpTimeMapper userIpTimeMapper = applicationContext.getBean(UserIpTimeMapper.class);
+                logger.info("Add {} to thread", taskName);
+                userIpTimeMapper.setRequest(request);
+                threadPoolTaskExecutor.execute(userIpTimeMapper);
             }
         }
     }
