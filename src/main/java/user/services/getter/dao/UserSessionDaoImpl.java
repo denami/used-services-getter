@@ -16,7 +16,7 @@ public class UserSessionDaoImpl implements UserSessionDao {
     @Override
     public UserSession getSession(Long ip, LocalDateTime localDateTime) {
         UserSession userSession = userSessionJDBCTemplate.getUserByLogin(ip,localDateTime);
-        if (userSession.getEndTime() == null) {
+        if (userSession != null && userSession.getEndTime() == null) {
             userSession.setEndTime(LocalDateTime.now());
         }
         return userSession;
