@@ -142,7 +142,7 @@ public class NfDumpUtil implements Runnable {
             } finally {
                 if (exitCode != 0) {
                     request.setStatus(RequestStatus.FAIL);
-                    log.error("NfDumpUtil complete unsuccessful:{}", request.getId());
+                    log.warn("NfDumpUtil complete unsuccessful:{}", request.getId());
                     RequestExecutionInfo info = requestExecutionInfoService.getInfoByRequestId(request.getId());
                     sb.append("\\n");
                     if(info.getMessage() == null) {
@@ -159,7 +159,12 @@ public class NfDumpUtil implements Runnable {
             request.setStatus(RequestStatus.PARSED);
             requestService.save(request);
 
+        } else {
+            log.error("NfDumpUtil complete unsuccessful:{}", id);
+            request.setStatus(RequestStatus.FAIL);
+            requestService.save(request);
         }
+
     }
 
     public String getNfDumpParserPath() {
