@@ -4,15 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import user.services.getter.services.LogRawService;
+import user.services.getter.services.ReportService;
 import user.services.getter.services.RequestService;
 import user.services.getter.services.UserSessionsService;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Component
 @Scope("prototype")
@@ -30,6 +28,9 @@ public class UserIpTimeMapper implements Runnable {
 
     @Autowired
     LogRawService logRawService;
+
+    @Autowired
+    ReportService reportService;
 
     Map<UserIpDateTime,LogInfo> raws = new HashMap<>(100);
 
@@ -75,16 +76,19 @@ public class UserIpTimeMapper implements Runnable {
             logRaws = logRawService.getLogRawRange(request.getId(), offset, COUNT);
         }
 
-        save(raws);
         request.setStatus(RequestStatus.DONE);
+        save(request, raws);
         requestService.save(request);
 
     }
 
-    private void save(Map<UserIpDateTime, LogInfo> raws) {
+    private void save(Request request, Map<UserIpDateTime, LogInfo> raws) {
 
-        //TODO implements
-
+        Integer requestId = request.getId();
+        Set<UserIpDateTime> keys = raws.keySet();
+        for (UserIpDateTime k : keys) {
+            reportService.save(requestId, raws.get(k).userId, k.dateTime , k.srcIp, k.dstIp , raws.get(k).bytes);
+        }
     }
 
     public Request getRequest() {
