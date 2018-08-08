@@ -1,11 +1,13 @@
 package user.services.getter.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import user.services.getter.JDBCTemplate.UserSessionJDBCTemplate;
 import user.services.getter.model.UserSession;
 
 import java.time.LocalDateTime;
 
+@Repository
 public class UserSessionDaoImpl implements UserSessionDao {
 
     @Autowired
