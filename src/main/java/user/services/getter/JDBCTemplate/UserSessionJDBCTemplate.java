@@ -30,7 +30,8 @@ public class UserSessionJDBCTemplate {
                 "INET_ATON(ip) as long_ip, " +
                 "starttime, " +
                 "stoptime, " +
-                "account FROM getter_history WHERE ip = INET_NTOA( ? ) and starttime <= ?";
+                "account FROM getter_history WHERE ip = INET_NTOA( ? ) and starttime <= ? " +
+                "ORDER BY starttime DESC LIMIT 1";
         try {
             UserSession userSession = jdbcTemplate.queryForObject(SQL, new Object[]{ip, startDateTime},
                     new RowMapper<UserSession>() {
