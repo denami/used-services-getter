@@ -11,6 +11,7 @@ import user.services.getter.model.UserSession;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -40,7 +41,11 @@ public class UserSessionJDBCTemplate {
 
                     Integer userId = rs.getInt("account");
                     LocalDateTime starttime = rs.getTimestamp("starttime").toLocalDateTime();
-                    LocalDateTime stoptime = rs.getTimestamp("stoptime").toLocalDateTime();
+                    LocalDateTime stoptime = null;
+                    Timestamp endTime = rs.getTimestamp("stoptime");
+                    if (endTime != null) {
+                        stoptime = rs.getTimestamp("stoptime").toLocalDateTime();
+                    }
                     Long ip = rs.getLong("long_ip");
 
                     return new UserSession(userId, ip, starttime, stoptime);

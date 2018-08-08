@@ -18,7 +18,7 @@ import java.util.Objects;
 @Scope("prototype")
 public class UserIpTimeMapper implements Runnable {
 
-    private static final Long COUNT = 100L;
+    private static final Long COUNT = 500L;
 
     private Request request;
 
@@ -39,10 +39,10 @@ public class UserIpTimeMapper implements Runnable {
         request.setStatus(RequestStatus.BUILDING);
         requestService.save(request);
 
-        Collection<LogRaw> logRaws;
         Long offset = 0L;
+        Collection<LogRaw> logRaws = logRawService.getLogRawRange(request.getId(), offset, COUNT);
 
-        while ((logRaws=logRawService.getLogRawRange(request.getId(), offset, COUNT)) != null) {
+        while (logRaws != null && logRaws.size() > 0) {
             for (LogRaw logRaw : logRaws) {
                 Long dstIP = logRaw.getDstIp();
                 Long srcIP = logRaw.getSrcIp();
@@ -72,6 +72,7 @@ public class UserIpTimeMapper implements Runnable {
                 }
             }
             offset +=COUNT;
+            logRaws = logRawService.getLogRawRange(request.getId(), offset, COUNT);
         }
 
         save(raws);
