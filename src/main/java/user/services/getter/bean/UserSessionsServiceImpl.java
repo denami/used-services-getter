@@ -40,7 +40,10 @@ public class UserSessionsServiceImpl implements UserSessionsService {
 
     @Override
     public Integer getAccountId(Long ip, LocalDateTime localDateTime) {
-        return getUserSession(ip, localDateTime).getUserId();
+        UserSession session = getUserSession(ip,localDateTime);
+        if (session!= null)
+            return session.getUserId();
+        return null;
     }
 
     private UserSession updateFromDB(Long ip, LocalDateTime localDateTime) {
