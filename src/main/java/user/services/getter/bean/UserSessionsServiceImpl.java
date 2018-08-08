@@ -21,19 +21,21 @@ public class UserSessionsServiceImpl implements UserSessionsService {
     @Override
     public UserSession getUserSession(Long ip, LocalDateTime localDateTime) {
 
-        if (userSessions.containsKey(ip) ) {
+        if (userSessions.containsKey(ip)) {
             UserSession userSession = userSessions.get(ip);
-            if((userSession.getStartTime().isBefore(localDateTime) || userSession.getStartTime().equals(localDateTime))
-            && (userSession.getEndTime().isAfter(localDateTime) || userSession.getStartTime().equals(localDateTime))) {
-             return userSession;
+            if ((userSession.getStartTime().isBefore(localDateTime)
+                    || userSession.getStartTime().equals(localDateTime))
+                    && (userSession.getEndTime().isAfter(localDateTime)
+                    || userSession.getStartTime().equals(localDateTime))) {
+                return userSession;
             } else {
-                userSession = recieveFromDB(ip,localDateTime);
-                userSessions.put(userSession.getIp(), userSession);
+                userSession = updateFromDB(ip, localDateTime);
                 return userSession;
             }
+        } else {
+            UserSession userSession = updateFromDB(ip, localDateTime);
+            return userSession;
         }
-
-        return null;
     }
 
     @Override
@@ -41,7 +43,12 @@ public class UserSessionsServiceImpl implements UserSessionsService {
         return getUserSession(ip, localDateTime).getUserId();
     }
 
-    private UserSession recieveFromDB(Long ip, LocalDateTime localDateTime) {
-        return userSessionDao.getSession(ip, localDateTime);
+    private UserSession updateFromDB(Long ip, LocalDateTime localDateTime) {
+        UserSession session = userSessionDao.getSession(ip, localDateTime);
+        if (session != null) {
+            userSessions.put(session.getIp(),session);
+            return session;
+        }
+        return null;
     }
 }
