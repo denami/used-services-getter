@@ -5,11 +5,16 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import user.services.getter.model.Report;
 import user.services.getter.model.Request;
 import user.services.getter.model.RequestStatus;
+import user.services.getter.services.ReportService;
 import user.services.getter.services.RequestService;
+
+import java.util.Collection;
 
 @Controller
 @RequestMapping(value = {"/", "/request"})
@@ -19,11 +24,21 @@ public class RequestController {
     @Qualifier(value = "requestService")
     private RequestService requestService;
 
+    @Autowired(required = true)
+    private ReportService reportService;
+
     @RequestMapping(value = {"/list", ""}, method = RequestMethod.GET)
     public String listRequests(Model model){
         model.addAttribute("request", new Request());
         model.addAttribute("listRequests", this.requestService.getAllRequests());
         return "requests_page";
+    }
+
+    @RequestMapping(value = "/report/{id}", method = RequestMethod.GET)
+    public String report(@PathVariable("id") Integer id, Model model){
+        Collection<Report> reports = reportService.getReports(id);
+        model.addAttribute("listReports", reports);
+        return "reports_page";
     }
 
     @RequestMapping(value = "/edit", method = RequestMethod.POST)

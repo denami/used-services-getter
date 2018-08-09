@@ -56,7 +56,7 @@
 <c:if test="${!empty listReports}">
     <table class="tg">
         <tr>
-            <th width="30">User ID</th>
+            <th width="30">Abonent ID</th>
             <th width="80">DateTime</th>
             <th width="120">Destination IP address</th>
 			<th width="120">Source IP address</th>
@@ -64,12 +64,11 @@
         </tr>
         <c:forEach items="${listReports}" var="report">
             <tr>
-                <td>${report.createDateTime}</td>
-                <td>${report.startDate}</td>
-                <td>${report.endDate}</td>
-                <td>${report.requestedIpAddressComaList}</td>
-                <td>${report.requestedDomainAddressComaList}</td>
-                <td>${report.status}</td>
+                <td>${report.userId}</td>
+                <td>${report.dateTime}</td>
+                <td>${report.srcIp}</td>
+                <td>${report.dstIp}</td>
+                <td>${report.bytes}</td>
             </tr>
         </c:forEach>
     </table>

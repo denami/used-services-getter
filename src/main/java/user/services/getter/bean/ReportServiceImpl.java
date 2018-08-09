@@ -26,12 +26,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public Report getReports(Integer requestId) {
-        return null;
+    public Collection<Report> getReports(Integer requestId) {
+        return reportDao.getReports(requestId);
     }
-
-//    @Override
-//    public Collection<Report> getReports(Integer requestId) {
-//        return reportDao.getReports(requestId);
-//    }
 }

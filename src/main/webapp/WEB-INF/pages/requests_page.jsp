@@ -66,7 +66,7 @@
         </tr>
         <c:forEach items="${listRequests}" var="request">
             <tr>
-                <td><a href="/request/getRequestById/${request.id}" target="_blank">${request.id}</a></td>
+                <td><a href="/report/${request.id}" target="_blank">${request.id}</a></td>
                 <td>${request.createDateTime}</td>
                 <td>${request.startDate}</td>
                 <td>${request.endDate}</td>
