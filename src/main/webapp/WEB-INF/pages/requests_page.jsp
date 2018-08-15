@@ -61,7 +61,7 @@
             <th width="80">Start date</th>
             <th width="80">End date</th>
             <th width="120">Requested IP address</th>
-            <th width="120">Requested domain address</th>
+            <th style="display:none;" width="120">Requested domain address</th>
             <th width="120">Status</th>
         </tr>
         <c:forEach items="${listRequests}" var="request">
@@ -71,7 +71,7 @@
                 <td>${request.startDate}</td>
                 <td>${request.endDate}</td>
                 <td>${request.requestedIpAddressComaList}</td>
-                <td>${request.requestedDomainAddressComaList}</td>
+                <td style="display:none;">${request.requestedDomainAddressComaList}</td>
                 <td>${request.status}</td>
             </tr>
         </c:forEach>
@@ -107,7 +107,7 @@
                 <form:input path="requestedIpAddress"/>
             </td>
         </tr>
-        <tr>
+        <tr style="display:none;">
             <td>
                 <form:label path="requestedDomainAddress">
                     <spring:message text="Requested domain address"/>
