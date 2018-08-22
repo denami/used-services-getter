@@ -2,6 +2,7 @@ apply from: 'https://raw.github.com/akhikhl/gretty/master/pluginScripts/gretty.p
 apply plugin: 'idea'
 apply plugin: 'war'
 apply plugin: 'java'
+apply plugin: 'project-report'
 
 group 'edu.spring.study'
 version '2.0-SNAPSHOT'
@@ -40,4 +41,6 @@ dependencies {
 
     compile 'org.slf4j:slf4j-api:1.6.6'
     compile 'org.slf4j:jcl-over-slf4j:1.6.6'
+
+    providedCompile 'javax.servlet:jstl:1.2'
 }

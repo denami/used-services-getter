@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Objects;
 
-public class Request {
+public class Request implements Comparable<Request> {
 
     public Request() {
         createDateTime = LocalDateTime.now();
@@ -120,5 +120,14 @@ public class Request {
     @Override
     public int hashCode() {
         return Objects.hash(id, createDateTime, status, startDate, endDate, requestedIpAddress, requestedDomainAddress);
+    }
+
+    @Override
+    public int compareTo(Request o) {
+        if (o.getId().equals(this.id)) {
+            if (o.getCreateDateTime().equals(this.createDateTime)) {
+                return 0;
+            } else return this.createDateTime.compareTo(o.getCreateDateTime());
+        } else return this.id.compareTo(o.getId());
     }
 }

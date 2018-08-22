@@ -14,10 +14,10 @@ import user.services.getter.model.RequestStatus;
 import user.services.getter.services.ReportService;
 import user.services.getter.services.RequestService;
 
-import java.util.Collection;
+import java.util.*;
 
 @Controller
-@RequestMapping(value = {"/", "/request"})
+@RequestMapping(value = {"/request"})
 public class RequestController {
 
     @Autowired(required = true)
@@ -30,7 +30,10 @@ public class RequestController {
     @RequestMapping(value = {"/list", ""}, method = RequestMethod.GET)
     public String listRequests(Model model){
         model.addAttribute("request", new Request());
-        model.addAttribute("listRequests", this.requestService.getAllRequests());
+
+        ArrayList<Request> rs = new ArrayList<Request>(requestService.getAllRequests());
+        Collections.sort(rs);
+        model.addAttribute("listRequests", rs);
         return "requests_page";
     }
 
