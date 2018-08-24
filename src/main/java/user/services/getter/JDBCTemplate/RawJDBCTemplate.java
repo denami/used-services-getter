@@ -28,7 +28,7 @@ public class RawJDBCTemplate {
 
     public Collection<LogRaw> getLogs(Integer requestId) {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT FROM_UNIXTIME(UNIXSEC) AS UNIXSEC, SRCADDR, SRCPORT, DSTADDR, DSTPORT, NATADDR, DOCTETS " +
+        sb.append("SELECT ROWDATETIME, SRCADDR, SRCPORT, DSTADDR, DSTPORT, NATADDR, DOCTETS " +
                 "FROM getter_raw_");
         sb.append(requestId);
         sb.append(";");
@@ -44,7 +44,7 @@ public class RawJDBCTemplate {
             jdbcTemplate.update("DROP TABLE IF EXISTS `getter_raw_" + requestId + "`; ");
             String SQL =
                     "CREATE TABLE IF NOT EXISTS `getter_raw_" + requestId + "` ( " +
-                    "  `UNIXSEC` int(12) UNSIGNED DEFAULT NULL, " +
+                    "  `ROWDATETIME` DATETIME DEFAULT NULL, " +
                     "  `SRCADDR` int(12) UNSIGNED DEFAULT NULL, " +
                     "  `SRCPORT` int(12) DEFAULT NULL, " +
                     "  `DSTADDR` int(12) UNSIGNED DEFAULT NULL, " +
@@ -53,12 +53,11 @@ public class RawJDBCTemplate {
                     "  `DOCTETS` int(12) DEFAULT NULL " +
                     ") ENGINE=MyISAM DEFAULT CHARSET=utf8; ";
             jdbcTemplate.update(SQL);
-            SQL = "INSERT INTO getter_raw_" + requestId + "(UNIXSEC, SRCADDR, SRCPORT, DSTADDR, DSTPORT, NATADDR, " +
+            SQL = "INSERT INTO getter_raw_" + requestId + "(ROWDATETIME, SRCADDR, SRCPORT, DSTADDR, DSTPORT, NATADDR, " +
                     "DOCTETS) VALUES (?, ?, ?, ?, ?, ?, ?)";
             for (LogRaw lr : logs) {
 
-                Timestamp timestamp = Timestamp.valueOf(lr.getDateTime());
-                jdbcTemplate.update(SQL, new Object[]{timestamp
+                jdbcTemplate.update(SQL, new Object[]{lr.getDateTime().format(dtf)
                         , lr.getSrcIp()
                         , lr.getSrcPort()
                         , lr.getDstIp()
@@ -71,7 +70,7 @@ public class RawJDBCTemplate {
 
     public Long getRawCount(Integer requestId) {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT count(UNIXSEC) FROM getter_raw_");
+        sb.append("SELECT count(ROWDATETIME) FROM getter_raw_");
         sb.append(requestId);
         sb.append(";");
 
@@ -80,7 +79,7 @@ public class RawJDBCTemplate {
 
     public Collection<LogRaw> getLogsRange(Integer requestId, Long ofset, Long limit) {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT FROM_UNIXTIME(UNIXSEC) AS UNIXSEC, SRCADDR, SRCPORT, DSTADDR, DSTPORT, NATADDR, DOCTETS " +
+        sb.append("SELECT ROWDATETIME, SRCADDR, SRCPORT, DSTADDR, DSTPORT, NATADDR, DOCTETS " +
                 "FROM getter_raw_");
         sb.append(requestId);
         sb.append(" Limit ?,?;");
@@ -95,7 +94,7 @@ public class RawJDBCTemplate {
 
         @Override
         public LogRaw mapRow(ResultSet rs, int rowNum) throws SQLException {
-            LogRaw logRaw = new LogRaw(rs.getTimestamp("UNIXSEC").toLocalDateTime(),
+            LogRaw logRaw = new LogRaw(rs.getTimestamp("ROWDATETIME").toLocalDateTime(),
                     rs.getLong("SRCADDR"),
                     rs.getInt("SRCPORT"),
                     rs.getLong("DSTADDR"),
