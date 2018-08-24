@@ -58,13 +58,14 @@ public class NfDumpUtil implements Runnable {
         if (ipAddresses != null && ipAddresses.size()>0) {
             boolean isFirst = true;
             StringBuilder sb = new StringBuilder();
-            sb.append("( ");
+            sb.append("\"( ");
             for (String s : ipAddresses) {
                 if (isFirst) {
                     sb.append("host " + s);
-                } sb.append(" or host " + s);
+                    isFirst = false;
+                } else sb.append(" or host " + s);
             }
-            sb.append(" )");
+            sb.append(" )\"");
             return sb.toString();
         }
         return null;
@@ -129,11 +130,12 @@ public class NfDumpUtil implements Runnable {
 
         for (String file : files) {
             Runtime rt = Runtime.getRuntime();
-            String[] commands = {nfDumpParserPath,
-                    dataDir,
-                    file,
-                    filter,
-                    request.getId().toString(), tmpDir};
+            String[] commands = {nfDumpParserPath
+                    ,dataDir
+                    ,file
+                    ,filter
+                    ,request.getId().toString()
+                    ,tmpDir};
 
             try {
                 Process p = rt.exec(commands);
@@ -188,61 +190,61 @@ public class NfDumpUtil implements Runnable {
                             logs.add(logRaw);
                         }
                     logRaw = new LogRaw();
-                }
 
-                if (line.contains("src addr")) {
-                    String[] element = line.split(" ");
-                    logRaw.setSrcIp(ipToLong(element[element.length - 1]));
-                }
 
-                if (line.contains("dst addr")) {
-                    String[] element = line.split(" ");
-                    logRaw.setDstIp(ipToLong(element[element.length - 1]));
-                }
-
-                if (line.contains("dst addr")) {
-                    String[] element = line.split(" ");
-                    logRaw.setDstIp(ipToLong(element[element.length - 1]));
-                }
-
-                if (line.contains("dst port")) {
-                    String[] element = line.split(" ");
-                    logRaw.setDstPort(Integer.valueOf(element[element.length - 1]));
-                }
-
-                if (line.contains("src port")) {
-                    String[] element = line.split(" ");
-                    logRaw.setSrcPort(Integer.valueOf(element[element.length - 1]));
-                }
-
-                //3108375808 <  > 3108376063
-                if (line.contains("dst xlt ip")) {
-                    if ((logRaw.getDstIp() <= 3108376063L)
-                        && (logRaw.getDstIp() >= 3108375808L)) {
+                    if (line.contains("src addr")) {
                         String[] element = line.split(" ");
-                        logRaw.setNatIp(ipToLong(element[element.length - 1]));
+                        logRaw.setSrcIp(ipToLong(element[element.length - 1]));
                     }
-                }
 
-                //172.0.0.0 <> 172.255.255.255
-                //2885681152 <> 2902458367
-                if (line.contains("src xlt ip")) {
-                    if ((logRaw.getSrcIp() <= 2885681152L)
-                        && (logRaw.getSrcIp() >= 2885681152L)) {
+                    if (line.contains("dst addr")) {
                         String[] element = line.split(" ");
-                        logRaw.setNatIp(ipToLong(element[element.length - 1]));
+                        logRaw.setDstIp(ipToLong(element[element.length - 1]));
                     }
+
+                    if (line.contains("dst addr")) {
+                        String[] element = line.split(" ");
+                        logRaw.setDstIp(ipToLong(element[element.length - 1]));
+                    }
+
+                    if (line.contains("dst port")) {
+                        String[] element = line.split(" ");
+                        logRaw.setDstPort(Integer.valueOf(element[element.length - 1]));
+                    }
+
+                    if (line.contains("src port")) {
+                        String[] element = line.split(" ");
+                        logRaw.setSrcPort(Integer.valueOf(element[element.length - 1]));
+                    }
+
+                    //3108375808 <  > 3108376063
+                    if (line.contains("dst xlt ip")) {
+                        if ((logRaw.getDstIp() <= 3108376063L)
+                                && (logRaw.getDstIp() >= 3108375808L)) {
+                            String[] element = line.split(" ");
+                            logRaw.setNatIp(ipToLong(element[element.length - 1]));
+                        }
+                    }
+
+                    //172.0.0.0 <> 172.255.255.255
+                    //2885681152 <> 2902458367
+                    if (line.contains("src xlt ip")) {
+                        if ((logRaw.getSrcIp() <= 2885681152L)
+                                && (logRaw.getSrcIp() >= 2885681152L)) {
+                            String[] element = line.split(" ");
+                            logRaw.setNatIp(ipToLong(element[element.length - 1]));
+                        }
+                    }
+
+                    if (line.contains("first")) {
+                        String[] element = line.split(" ");
+                        Long l = Long.valueOf(element[element.length - 3]);
+                        logRaw.setDateTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(l),
+                                TimeZone.getDefault().toZoneId()));
+                    }
+
+                    line = br.readLine();
                 }
-
-                if (line.contains("first")) {
-                    String[] element = line.split(" ");
-                    Long l = Long.valueOf(element[element.length-3]);
-                    logRaw.setDateTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(l),
-                            TimeZone.getDefault().toZoneId()));
-                }
-
-                line = br.readLine();
-
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
