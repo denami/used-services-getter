@@ -41,8 +41,8 @@ public class RawJDBCTemplate {
 
     public void save(Integer requestId, Collection<LogRaw> logs) {
         if (logs != null && logs.size() > 0) {
-            String SQL = "DROP TABLE IF EXISTS `getter_raw_" + requestId + "`; " +
-
+            jdbcTemplate.update("DROP TABLE IF EXISTS `getter_raw_" + requestId + "`; ");
+            String SQL =
                     "CREATE TABLE IF NOT EXISTS `getter_raw_" + requestId + "` ( " +
                     "  `UNIXSEC` int(12) UNSIGNED DEFAULT NULL, " +
                     "  `SRCADDR` int(12) UNSIGNED DEFAULT NULL, " +
