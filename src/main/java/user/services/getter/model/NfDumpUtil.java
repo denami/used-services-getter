@@ -58,14 +58,14 @@ public class NfDumpUtil implements Runnable {
         if (ipAddresses != null && ipAddresses.size()>0) {
             boolean isFirst = true;
             StringBuilder sb = new StringBuilder();
-            sb.append("\"( ");
+            sb.append("( ");
             for (String s : ipAddresses) {
                 if (isFirst) {
                     sb.append("host " + s);
                     isFirst = false;
                 } else sb.append(" or host " + s);
             }
-            sb.append(" )\"");
+            sb.append(" )");
             return sb.toString();
         }
         return null;
@@ -185,12 +185,12 @@ public class NfDumpUtil implements Runnable {
                 LogRaw logRaw = new LogRaw();
 
                 while (line != null) {
-                    if (line.matches("^Flow Record:"))
+                    if (line.contains("Flow Record:")) {
                         if (logRaw.getDstPort() != null) {
                             logs.add(logRaw);
                         }
-                    logRaw = new LogRaw();
-
+                        logRaw = new LogRaw();
+                    }
 
                     if (line.contains("src addr")) {
                         String[] element = line.split(" ");
@@ -217,6 +217,11 @@ public class NfDumpUtil implements Runnable {
                         logRaw.setSrcPort(Integer.valueOf(element[element.length - 1]));
                     }
 
+                    if (line.contains("(in)bytes")) {
+                        String[] element = line.split(" ");
+                        logRaw.setBytes(Integer.valueOf(element[element.length - 1]));
+                    }
+
                     //3108375808 <  > 3108376063
                     if (line.contains("dst xlt ip")) {
                         if ((logRaw.getDstIp() <= 3108376063L)
@@ -236,7 +241,7 @@ public class NfDumpUtil implements Runnable {
                         }
                     }
 
-                    if (line.contains("first")) {
+                    if (line.contains(" first")) {
                         String[] element = line.split(" ");
                         Long l = Long.valueOf(element[element.length - 3]);
                         logRaw.setDateTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(l),
@@ -254,6 +259,7 @@ public class NfDumpUtil implements Runnable {
                     e.printStackTrace();
                 }
             }
+            log.info("Receiver {} rows", logs.size());
 
         }
         if (exitCode == 0) {
