@@ -29,4 +29,9 @@ public class LogRawServiceImpl implements LogRawService {
     public Long geLogRawCount(Integer requestId) {
         return rawJDBCTemplate.getRawCount(requestId);
     }
+
+    @Override
+    public void save(Integer requestId, Collection<LogRaw> logs) {
+        rawJDBCTemplate.save(requestId, logs);
+    }
 }

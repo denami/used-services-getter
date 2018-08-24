@@ -10,6 +10,7 @@ import user.services.getter.model.LogRaw;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashSet;
@@ -36,6 +37,34 @@ public class RawJDBCTemplate {
 
         return new HashSet<>(logRaws);
 
+    }
+
+    public void save(Integer requestId, Collection<LogRaw> logs) {
+        if (logs != null && logs.size() > 0) {
+            String SQL = "DROP TABLE IF EXISTS `getter_raw_" + requestId + "`; " +
+
+                    "CREATE TABLE IF NOT EXISTS `getter_raw_" + requestId + "` ( " +
+                    "  `UNIXSEC` int(12) UNSIGNED DEFAULT NULL, " +
+                    "  `SRCADDR` int(12) UNSIGNED DEFAULT NULL, " +
+                    "  `SRCPORT` int(12) DEFAULT NULL, " +
+                    "  `DSTADDR` int(12) UNSIGNED DEFAULT NULL, " +
+                    "  `DSTPORT` int(12) DEFAULT NULL, " +
+                    "  `NATADDR` int(12) UNSIGNED DEFAULT NULL, " +
+                    "  `DOCTETS` int(12) DEFAULT NULL " +
+                    ") ENGINE=MyISAM DEFAULT CHARSET=utf8; ";
+            jdbcTemplate.update(SQL);
+            SQL = "INSERT INTO getter_raw_" + requestId + "(UNIXSEC, SRCADDR, SRCPORT, DSTADDR, DSTPORT, NATADDR, " +
+                    "DOCTETS) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            for (LogRaw lr : logs) {
+                jdbcTemplate.update(SQL, new Object[]{Timestamp.valueOf(lr.getDateTime())
+                        , lr.getSrcIp()
+                        , lr.getSrcPort()
+                        , lr.getDstIp()
+                        , lr.getDstPort()
+                        , lr.getNatIp()
+                        , lr.getBytes()});
+            }
+        }
     }
 
     public Long getRawCount(Integer requestId) {

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import user.services.getter.services.LogRawService;
 import user.services.getter.services.RequestExecutionInfoService;
 import user.services.getter.services.RequestService;
 
@@ -33,6 +34,9 @@ public class NfDumpUtil implements Runnable {
 
     @Autowired
     RequestExecutionInfoService requestExecutionInfoService;
+
+    @Autowired
+    LogRawService logRawService;
 
     Collection<String> files;
     Integer id;
@@ -259,7 +263,7 @@ public class NfDumpUtil implements Runnable {
                     e.printStackTrace();
                 }
             }
-            log.info("Receiver {} rows", logs.size());
+
 
         }
         if (exitCode == 0) {
@@ -272,6 +276,9 @@ public class NfDumpUtil implements Runnable {
             request.setStatus(RequestStatus.FAIL);
             requestService.save(request);
         }
+
+        log.info("Receiver {} rows", logs.size());
+        logRawService.save(request.getId(), logs);
 
     }
 

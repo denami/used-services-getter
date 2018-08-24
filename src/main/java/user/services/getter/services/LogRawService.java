@@ -8,4 +8,5 @@ public interface LogRawService {
     public Collection<LogRaw> getAllLogRaw(Integer requestId);
     public Collection<LogRaw> getLogRawRange(Integer requestId, Long offset, Long limit);
     public Long geLogRawCount(Integer requestId);
+    public void save(Integer requestId, Collection<LogRaw> logs);
 }
