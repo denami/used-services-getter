@@ -56,7 +56,9 @@ public class RawJDBCTemplate {
             SQL = "INSERT INTO getter_raw_" + requestId + "(UNIXSEC, SRCADDR, SRCPORT, DSTADDR, DSTPORT, NATADDR, " +
                     "DOCTETS) VALUES (?, ?, ?, ?, ?, ?, ?)";
             for (LogRaw lr : logs) {
-                jdbcTemplate.update(SQL, new Object[]{Timestamp.valueOf(lr.getDateTime())
+
+                Timestamp timestamp = Timestamp.valueOf(lr.getDateTime());
+                jdbcTemplate.update(SQL, new Object[]{timestamp
                         , lr.getSrcIp()
                         , lr.getSrcPort()
                         , lr.getDstIp()
