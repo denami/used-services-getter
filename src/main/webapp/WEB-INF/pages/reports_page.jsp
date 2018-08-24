@@ -60,6 +60,7 @@
             <th width="80">DateTime</th>
             <th width="120">Destination IP address</th>
 			<th width="120">Source IP address</th>
+			<th width="120">Nat IP address</th>
             <th width="120">Bytes</th>
         </tr>
         <c:forEach items="${listReports}" var="report">
@@ -68,6 +69,7 @@
                 <td>${report.dateTime}</td>
                 <td>${report.srcIp}</td>
                 <td>${report.dstIp}</td>
+                <td>${report.natIp}</td>
                 <td>${report.bytes}</td>
             </tr>
         </c:forEach>

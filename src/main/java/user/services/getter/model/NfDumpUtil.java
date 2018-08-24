@@ -9,11 +9,12 @@ import org.springframework.stereotype.Component;
 import user.services.getter.services.RequestExecutionInfoService;
 import user.services.getter.services.RequestService;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.TimeZone;
 
 @Component
 @Scope("prototype")
@@ -51,6 +52,22 @@ public class NfDumpUtil implements Runnable {
 
     public void setDataDir(String dataDir) {
         this.dataDir = dataDir;
+    }
+
+    private String getNfDumpFilter(Collection<String> ipAddresses) {
+        if (ipAddresses != null && ipAddresses.size()>0) {
+            boolean isFirst = true;
+            StringBuilder sb = new StringBuilder();
+            sb.append("( ");
+            for (String s : ipAddresses) {
+                if (isFirst) {
+                    sb.append("host " + s);
+                } sb.append(" or host " + s);
+            }
+            sb.append(" )");
+            return sb.toString();
+        }
+        return null;
     }
 
     private String getIpGrepString(Collection<String> ipAddresses) {
@@ -95,14 +112,19 @@ public class NfDumpUtil implements Runnable {
 
     @Override
     public void run() {
+
+        String tmpDir = "/tmp";
         StringBuilder sb = new StringBuilder();
         Integer exitCode = 0;
         request.setStatus(RequestStatus.PARSING);
         requestService.save(request);
         Collection<String> ipAddresses = request.getRequestedIpAddress();
         String grepIntIpAddresses = "\\|";
+        String filter = "";
+        Collection<LogRaw> logs = new HashSet<>();
         if (ipAddresses != null){
             grepIntIpAddresses = getIpGrepString(ipAddresses);
+            filter = getNfDumpFilter(ipAddresses);
         }
 
         for (String file : files) {
@@ -110,8 +132,8 @@ public class NfDumpUtil implements Runnable {
             String[] commands = {nfDumpParserPath,
                     dataDir,
                     file,
-                    grepIntIpAddresses,
-                    request.getId().toString()};
+                    filter,
+                    request.getId().toString(), tmpDir};
 
             try {
                 Process p = rt.exec(commands);
@@ -153,6 +175,84 @@ public class NfDumpUtil implements Runnable {
                     requestExecutionInfoService.save(info);
                 }
             }
+
+            BufferedReader br = null;
+            try {
+                br = new BufferedReader(new FileReader(tmpDir + "/" + file + ".out"));
+                String line = br.readLine();
+                LogRaw logRaw = new LogRaw();
+
+                while (line != null) {
+                    if (line.matches("^Flow Record:"))
+                        if (logRaw.getDstPort() != null) {
+                            logs.add(logRaw);
+                        }
+                    logRaw = new LogRaw();
+                }
+
+                if (line.contains("src addr")) {
+                    String[] element = line.split(" ");
+                    logRaw.setSrcIp(ipToLong(element[element.length - 1]));
+                }
+
+                if (line.contains("dst addr")) {
+                    String[] element = line.split(" ");
+                    logRaw.setDstIp(ipToLong(element[element.length - 1]));
+                }
+
+                if (line.contains("dst addr")) {
+                    String[] element = line.split(" ");
+                    logRaw.setDstIp(ipToLong(element[element.length - 1]));
+                }
+
+                if (line.contains("dst port")) {
+                    String[] element = line.split(" ");
+                    logRaw.setDstPort(Integer.valueOf(element[element.length - 1]));
+                }
+
+                if (line.contains("src port")) {
+                    String[] element = line.split(" ");
+                    logRaw.setSrcPort(Integer.valueOf(element[element.length - 1]));
+                }
+
+                //3108375808 <  > 3108376063
+                if (line.contains("dst xlt ip")) {
+                    if ((logRaw.getDstIp() <= 3108376063L)
+                        && (logRaw.getDstIp() >= 3108375808L)) {
+                        String[] element = line.split(" ");
+                        logRaw.setNatIp(ipToLong(element[element.length - 1]));
+                    }
+                }
+
+                //172.0.0.0 <> 172.255.255.255
+                //2885681152 <> 2902458367
+                if (line.contains("src xlt ip")) {
+                    if ((logRaw.getSrcIp() <= 2885681152L)
+                        && (logRaw.getSrcIp() >= 2885681152L)) {
+                        String[] element = line.split(" ");
+                        logRaw.setNatIp(ipToLong(element[element.length - 1]));
+                    }
+                }
+
+                if (line.contains("first")) {
+                    String[] element = line.split(" ");
+                    Long l = Long.valueOf(element[element.length-3]);
+                    logRaw.setDateTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(l),
+                            TimeZone.getDefault().toZoneId()));
+                }
+
+                line = br.readLine();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }
         if (exitCode == 0) {
             log.info("NfDumpUtil complete successful:{}", id);
@@ -176,6 +276,6 @@ public class NfDumpUtil implements Runnable {
     }
 
     public void setRequest(Request request) {
-        this.request=request;
+        this.request = request;
     }
 }

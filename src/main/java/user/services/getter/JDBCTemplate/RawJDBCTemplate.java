@@ -27,7 +27,8 @@ public class RawJDBCTemplate {
 
     public Collection<LogRaw> getLogs(Integer requestId) {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT FROM_UNIXTIME(UNIXSEC) AS UNIXSEC, SRCADDR, SRCPORT, DSTADDR, DSTPORT, DOCTETS FROM getter_raw_");
+        sb.append("SELECT FROM_UNIXTIME(UNIXSEC) AS UNIXSEC, SRCADDR, SRCPORT, DSTADDR, DSTPORT, NATADDR, DOCTETS " +
+                "FROM getter_raw_");
         sb.append(requestId);
         sb.append(";");
 
@@ -48,7 +49,8 @@ public class RawJDBCTemplate {
 
     public Collection<LogRaw> getLogsRange(Integer requestId, Long ofset, Long limit) {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT FROM_UNIXTIME(UNIXSEC) AS UNIXSEC, SRCADDR, SRCPORT, DSTADDR, DSTPORT, DOCTETS FROM getter_raw_");
+        sb.append("SELECT FROM_UNIXTIME(UNIXSEC) AS UNIXSEC, SRCADDR, SRCPORT, DSTADDR, DSTPORT, NATADDR, DOCTETS " +
+                "FROM getter_raw_");
         sb.append(requestId);
         sb.append(" Limit ?,?;");
 
@@ -67,6 +69,7 @@ public class RawJDBCTemplate {
                     rs.getInt("SRCPORT"),
                     rs.getLong("DSTADDR"),
                     rs.getInt("DSTPORT"),
+                    rs.getLong("NATADDR"),
                     rs.getInt("DOCTETS"));
 
             return logRaw;

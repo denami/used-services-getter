@@ -10,17 +10,20 @@ public class Report implements Comparable<Report> {
     private LocalDateTime dateTime;
     private String srcIp;
     private String dstIp;
+    private String natIp;
     private Integer bytes;
 
     public Report() {
     }
 
-    public Report(Integer requestId, Integer userId, LocalDateTime dateTime, String srcIp, String dstIp, Integer bytes) {
+    public Report(Integer requestId, Integer userId, LocalDateTime dateTime, String srcIp, String dstIp, String natIp,
+                  Integer bytes) {
         this.requestId = requestId;
         this.userId = userId;
         this.dateTime = dateTime;
         this.srcIp = srcIp;
         this.dstIp = dstIp;
+        this.natIp = natIp;
         this.bytes = bytes;
     }
 
@@ -72,15 +75,25 @@ public class Report implements Comparable<Report> {
         this.bytes = bytes;
     }
 
+    public String getNatIp() {
+        return natIp;
+    }
+
+    public void setNatIp(String natIp) {
+        this.natIp = natIp;
+    }
+
     @Override
     public int compareTo(Report o) {
         if(o.getRequestId().equals(this.requestId)){
             if (o.getUserId().equals(this.userId)){
                 if (o.getDateTime().equals(this.dateTime)){
                     if(o.getDstIp().equals(this.dstIp)){
-                        if (o.getSrcIp().equals(this.srcIp)){
-                            if (o.getBytes().equals(this.bytes)){
-                                return 0;
+                        if (o.getSrcIp().equals(this.srcIp)) {
+                            if (o.getBytes().equals(this.bytes)) {
+                                if (o.getNatIp().equals(this.natIp)) {
+                                    return 0;
+                                } else return o.getNatIp().compareTo(this.natIp);
                             } else return o.getBytes().compareTo(this.bytes);
                         }else return o.getSrcIp().compareTo(this.srcIp);
                     } else return o.getDstIp().compareTo(this.dstIp);
@@ -98,12 +111,13 @@ public class Report implements Comparable<Report> {
                 Objects.equals(userId, report.userId) &&
                 Objects.equals(dateTime, report.dateTime) &&
                 Objects.equals(srcIp, report.srcIp) &&
+                Objects.equals(natIp, report.natIp) &&
                 Objects.equals(dstIp, report.dstIp) &&
                 Objects.equals(bytes, report.bytes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(requestId, userId, dateTime, srcIp, dstIp, bytes);
+        return Objects.hash(requestId, userId, dateTime, srcIp, dstIp, natIp, bytes);
     }
 }

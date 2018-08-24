@@ -46,7 +46,7 @@
     </style>
 </head>
 <body>
-<a href="/">Back to main menu</a>
+<a href="${pageContext.request.contextPath}">Back to main menu</a>
 
 <br/>
 <br/>
@@ -66,7 +66,7 @@
         </tr>
         <c:forEach items="${listRequests}" var="request">
             <tr>
-                <td><a href="/request/report/${request.id}" target="_blank">${request.id}</a></td>
+                <td><a href="${pageContext.request.contextPath}/request/report/${request.id}" target="_blank">${request.id}</a></td>
                 <td>${request.createDateTime}</td>
                 <td>${request.startDate}</td>
                 <td>${request.endDate}</td>
@@ -80,7 +80,7 @@
 
 <h1>Add request</h1>
 
-<c:url var="addAction" value="/request/edit"/>
+<c:url var="addAction" value="${pageContext.request.contextPath}/request/edit"/>
 
 <form:form action="${addAction}" commandName="request">
     <table>

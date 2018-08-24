@@ -48,7 +48,7 @@ public class ReportJDBCTemplate{
 
     public Collection<Report> getReports(Integer requestId) {
 
-        String SQL = "SELECT request_id, user_id, data_time, SRCADDR, DSTADDR, DOCTETS " +
+        String SQL = "SELECT request_id, user_id, data_time, SRCADDR, DSTADDR, NATADDR, DOCTETS " +
                 "FROM getter_report WHERE request_id = ?";
         List<Report> reports ;
         try {
@@ -62,9 +62,10 @@ public class ReportJDBCTemplate{
                             LocalDateTime time = rs.getTimestamp("data_time").toLocalDateTime();
                             String srcIp = rs.getString("SRCADDR");
                             String dstIp = rs.getString("DSTADDR");
+                            String natIp = rs.getString("NATADDR");
                             Integer bytes = rs.getInt("DOCTETS");
 
-                            return new Report(request_id, user_id, time, dstIp, srcIp, bytes);
+                            return new Report(request_id, user_id, time, dstIp, srcIp, natIp, bytes);
                         }
                     });
             return new HashSet<>(reports);
