@@ -47,6 +47,7 @@ public class UserIpTimeMapper implements Runnable {
             for (LogRaw logRaw : logRaws) {
                 Long dstIP = logRaw.getDstIp();
                 Long srcIP = logRaw.getSrcIp();
+                Long natIp = logRaw.getNatIp();
 
                 Integer userId = userSessionsService.getAccountId(dstIP, logRaw.getDateTime());
 
@@ -62,6 +63,7 @@ public class UserIpTimeMapper implements Runnable {
                 UserIpDateTime userIpDateTime = new UserIpDateTime(
                         dstIP,
                         srcIP,
+                        natIp,
                         logRaw.getDateTime().truncatedTo(ChronoUnit.MINUTES));
                 if (raws.containsKey(userIpDateTime)) {
                     LogInfo logInfo = raws.get(userIpDateTime);
@@ -72,7 +74,7 @@ public class UserIpTimeMapper implements Runnable {
                     raws.put(userIpDateTime, logInfo);
                 }
             }
-            offset +=COUNT;
+            offset += COUNT;
             logRaws = logRawService.getLogRawRange(request.getId(), offset, COUNT);
         }
 
@@ -87,7 +89,13 @@ public class UserIpTimeMapper implements Runnable {
         Integer requestId = request.getId();
         Set<UserIpDateTime> keys = raws.keySet();
         for (UserIpDateTime k : keys) {
-            reportService.save(requestId, raws.get(k).userId, k.dateTime , k.srcIp, k.dstIp , raws.get(k).bytes);
+            reportService.save(requestId
+                    , raws.get(k).userId
+                    , k.dateTime
+                    , k.srcIp
+                    , k.dstIp
+                    , k.natIp
+                    , raws.get(k).bytes);
         }
     }
 
@@ -102,11 +110,13 @@ public class UserIpTimeMapper implements Runnable {
     private class UserIpDateTime {
         private Long dstIp;
         private Long srcIp;
+        private Long natIp;
         private LocalDateTime dateTime;
 
-        public UserIpDateTime(Long dstIp, Long srcIp, LocalDateTime dateTime) {
+        public UserIpDateTime(Long dstIp, Long srcIp, Long natIp, LocalDateTime dateTime) {
             this.dstIp = dstIp;
             this.srcIp = srcIp;
+            this.natIp = natIp;
             this.dateTime = dateTime;
         }
 
@@ -134,6 +144,14 @@ public class UserIpTimeMapper implements Runnable {
             this.dateTime = dateTime;
         }
 
+        public Long getNatIp() {
+            return natIp;
+        }
+
+        public void setNatIp(Long natIp) {
+            this.natIp = natIp;
+        }
+
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
@@ -141,12 +159,13 @@ public class UserIpTimeMapper implements Runnable {
             UserIpDateTime that = (UserIpDateTime) o;
             return Objects.equals(dstIp, that.dstIp) &&
                     Objects.equals(srcIp, that.srcIp) &&
+                    Objects.equals(natIp, that.natIp) &&
                     Objects.equals(dateTime, that.dateTime);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(dstIp, srcIp, dateTime);
+            return Objects.hash(dstIp, srcIp, natIp, dateTime);
         }
     }
 

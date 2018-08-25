@@ -16,8 +16,9 @@ public class ReportServiceImpl implements ReportService {
     ReportDao reportDao;
 
     @Override
-    public void save(Integer requestId, Integer userId, LocalDateTime dateTime, Long srcIp, Long dstIp, Integer bytes) {
-        reportDao.save(requestId, userId, dateTime, srcIp, dstIp, bytes);
+    public void save(Integer requestId, Integer userId, LocalDateTime dateTime, Long srcIp, Long dstIp,
+                     Long natIp, Integer bytes) {
+        reportDao.save(requestId, userId, dateTime, srcIp, dstIp, natIp, bytes);
     }
 
     @Override

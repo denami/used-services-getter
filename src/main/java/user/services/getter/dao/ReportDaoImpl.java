@@ -15,8 +15,9 @@ public class ReportDaoImpl implements ReportDao {
     ReportJDBCTemplate reportJDBCTemplate;
 
     @Override
-    public void save(Integer requestId, Integer userId, LocalDateTime dateTime, Long srcIp, Long dstIp, Integer bytes) {
-        reportJDBCTemplate.save(requestId, userId, dateTime, srcIp, dstIp, bytes);
+    public void save(Integer requestId, Integer userId, LocalDateTime dateTime, Long srcIp, Long dstIp,
+                     Long natIp, Integer bytes) {
+        reportJDBCTemplate.save(requestId, userId, dateTime, srcIp, dstIp, natIp, bytes);
     }
 
     @Override

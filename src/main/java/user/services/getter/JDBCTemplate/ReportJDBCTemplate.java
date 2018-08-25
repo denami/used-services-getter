@@ -27,9 +27,10 @@ public class ReportJDBCTemplate{
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void save(Integer requestId, Integer userId, LocalDateTime dateTime, Long srcIp, Long dstIp, Integer bytes) {
-        String SQL = "INSERT INTO getter_report (request_id, user_id, data_time, SRCADDR, DSTADDR, DOCTETS) " +
-                "VALUES (?, ?, ?, INET_NTOA( ? ), INET_NTOA( ? ), ?)";
+    public void save(Integer requestId, Integer userId, LocalDateTime dateTime, Long srcIp, Long dstIp,
+                     Long natIp, Integer bytes) {
+        String SQL = "INSERT INTO getter_report (request_id, user_id, data_time, SRCADDR, DSTADDR, DOCTETS, NATADDR) " +
+                "VALUES (?, ?, ?, INET_NTOA( ? ), INET_NTOA( ? ), ?, INET_NTOA( ? ))";
 
         jdbcTemplate.update(SQL, new Object[]{
                 requestId,
@@ -37,6 +38,7 @@ public class ReportJDBCTemplate{
                 dateTime.format(dtf),
                 srcIp,
                 dstIp,
+                natIp,
                 bytes});
 
     }
