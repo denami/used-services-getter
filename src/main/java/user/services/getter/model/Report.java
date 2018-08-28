@@ -12,12 +12,18 @@ public class Report implements Comparable<Report> {
     private String dstIp;
     private String natIp;
     private Integer bytes;
+    private String abnInfo;
 
     public Report() {
     }
 
-    public Report(Integer requestId, Integer userId, LocalDateTime dateTime, String srcIp, String dstIp, String natIp,
-                  Integer bytes) {
+    public Report(Integer requestId
+            ,Integer userId
+            ,LocalDateTime dateTime
+            ,String srcIp
+            ,String dstIp
+            ,String natIp
+            ,Integer bytes) {
         this.requestId = requestId;
         this.userId = userId;
         this.dateTime = dateTime;
@@ -83,6 +89,14 @@ public class Report implements Comparable<Report> {
         this.natIp = natIp;
     }
 
+    public String getAbnInfo() {
+        return abnInfo;
+    }
+
+    public void setAbnInfo(String abnInfo) {
+        this.abnInfo = abnInfo;
+    }
+
     @Override
     public int compareTo(Report o) {
         if(o.getRequestId().equals(this.requestId)){
@@ -92,7 +106,9 @@ public class Report implements Comparable<Report> {
                         if (o.getSrcIp().equals(this.srcIp)) {
                             if (o.getBytes().equals(this.bytes)) {
                                 if (o.getNatIp().equals(this.natIp)) {
-                                    return 0;
+                                    if (o.getAbnInfo().equals(this.abnInfo)){
+                                        return 0;
+                                    } else return o.getAbnInfo().compareTo(this.abnInfo);
                                 } else return o.getNatIp().compareTo(this.natIp);
                             } else return o.getBytes().compareTo(this.bytes);
                         }else return o.getSrcIp().compareTo(this.srcIp);
@@ -113,11 +129,12 @@ public class Report implements Comparable<Report> {
                 Objects.equals(srcIp, report.srcIp) &&
                 Objects.equals(natIp, report.natIp) &&
                 Objects.equals(dstIp, report.dstIp) &&
+                Objects.equals(abnInfo, report.abnInfo) &&
                 Objects.equals(bytes, report.bytes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(requestId, userId, dateTime, srcIp, dstIp, natIp, bytes);
+        return Objects.hash(requestId, userId, dateTime, srcIp, dstIp, natIp, bytes, abnInfo);
     }
 }

@@ -11,13 +11,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import user.services.getter.model.Report;
 import user.services.getter.model.Request;
 import user.services.getter.model.RequestStatus;
+import user.services.getter.services.AbonentInfoService;
 import user.services.getter.services.ReportService;
 import user.services.getter.services.RequestService;
 
 import java.util.*;
 
 @Controller
-@RequestMapping(value = {"/request"})
+@RequestMapping(value = {"/request", "/"})
+
 public class RequestController {
 
     @Autowired(required = true)

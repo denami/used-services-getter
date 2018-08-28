@@ -2,6 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib prefix="from" uri="http://www.springframework.org/tags/form" %>
+<%@ page language="java" contentType="text/html; charset=UTF8" pageEncoding="UTF8"%>
 <html>
 <head>
     <title>Reports</title>
@@ -62,6 +63,7 @@
 			<th width="120">Source IP address</th>
 			<th width="120">Nat IP address</th>
             <th width="120">Bytes</th>
+            <th width="120">Abonent info</th>
         </tr>
         <c:forEach items="${listReports}" var="report">
             <tr>
@@ -71,6 +73,7 @@
                 <td>${report.dstIp}</td>
                 <td>${report.natIp}</td>
                 <td>${report.bytes}</td>
+                <td>${report.abnInfo}</td>
             </tr>
         </c:forEach>
     </table>
