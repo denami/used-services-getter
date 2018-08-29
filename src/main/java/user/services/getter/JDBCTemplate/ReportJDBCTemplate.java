@@ -38,8 +38,8 @@ public class ReportJDBCTemplate{
                 dateTime.format(dtf),
                 srcIp,
                 dstIp,
-                natIp,
-                bytes});
+                bytes,
+                natIp});
 
     }
 
