@@ -238,8 +238,8 @@ public class NfDumpUtil implements Runnable {
                     //172.0.0.0 <> 172.255.255.255
                     //2885681152 <> 2902458367
                     if (line.contains("src xlt ip")) {
-                        if ((logRaw.getSrcIp() <= 2885681152L)
-                                && (logRaw.getSrcIp() >= 2885681152L)) {
+                        if ((logRaw.getSrcIp() >= 2885681152L)
+                                && (logRaw.getSrcIp() <= 2902458367L)) {
                             String[] element = line.split(" ");
                             logRaw.setNatIp(ipToLong(element[element.length - 1]));
                         }
