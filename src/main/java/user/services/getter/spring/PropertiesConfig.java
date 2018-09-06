@@ -16,7 +16,8 @@ public class PropertiesConfig{
                 new ClassPathResource("properties/db.properties"),
                 new ClassPathResource("properties/nfdump.properties"),
                 new ClassPathResource("properties/threadPool.properties"),
-                new ClassPathResource("properties/fileDateTimeMapper.properties")
+                new ClassPathResource("properties/fileDateTimeMapper.properties"),
+                new ClassPathResource("properties/networks.properties")
         );
 
         configurer.setSystemPropertiesModeName("SYSTEM_PROPERTIES_MODE_OVERRIDE");

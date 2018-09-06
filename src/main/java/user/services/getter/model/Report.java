@@ -11,19 +11,23 @@ public class Report implements Comparable<Report> {
     private String srcIp;
     private String dstIp;
     private String natIp;
-    private Integer bytes;
+    private Integer bytes = 0;
     private String abnInfo;
+    private Integer srcPort = 0;
+    private Integer dstPort = 0;
 
     public Report() {
     }
 
     public Report(Integer requestId
-            ,Integer userId
-            ,LocalDateTime dateTime
-            ,String srcIp
-            ,String dstIp
-            ,String natIp
-            ,Integer bytes) {
+            , Integer userId
+            , LocalDateTime dateTime
+            , String srcIp
+            , String dstIp
+            , String natIp
+            , Integer bytes
+            , Integer srcPort
+            , Integer dstPort) {
         this.requestId = requestId;
         this.userId = userId;
         this.dateTime = dateTime;
@@ -31,6 +35,24 @@ public class Report implements Comparable<Report> {
         this.dstIp = dstIp;
         this.natIp = natIp;
         this.bytes = bytes;
+        this.srcPort = srcPort;
+        this.dstPort = dstPort;
+    }
+
+    public Integer getSrcPort() {
+        return srcPort;
+    }
+
+    public void setSrcPort(Integer srcPort) {
+        this.srcPort = srcPort;
+    }
+
+    public Integer getDstPort() {
+        return dstPort;
+    }
+
+    public void setDstPort(Integer dstPort) {
+        this.dstPort = dstPort;
     }
 
     public Integer getRequestId() {
@@ -107,7 +129,11 @@ public class Report implements Comparable<Report> {
                             if (o.getBytes().equals(this.bytes)) {
                                 if (o.getNatIp().equals(this.natIp)) {
                                     if (o.getAbnInfo().equals(this.abnInfo)){
-                                        return 0;
+                                        if (o.getSrcPort().equals(this.srcPort)) {
+                                            if (o.getDstPort().equals(this.dstPort)) {
+                                                return 0;
+                                            } else return o.getDstPort().compareTo(this.dstPort);
+                                        } else return o.getSrcPort().compareTo(this.srcPort);
                                     } else return o.getAbnInfo().compareTo(this.abnInfo);
                                 } else return o.getNatIp().compareTo(this.natIp);
                             } else return o.getBytes().compareTo(this.bytes);
@@ -127,14 +153,16 @@ public class Report implements Comparable<Report> {
                 Objects.equals(userId, report.userId) &&
                 Objects.equals(dateTime, report.dateTime) &&
                 Objects.equals(srcIp, report.srcIp) &&
+                Objects.equals(srcPort, report.srcPort) &&
                 Objects.equals(natIp, report.natIp) &&
                 Objects.equals(dstIp, report.dstIp) &&
+                Objects.equals(dstPort, report.dstPort) &&
                 Objects.equals(abnInfo, report.abnInfo) &&
                 Objects.equals(bytes, report.bytes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(requestId, userId, dateTime, srcIp, dstIp, natIp, bytes, abnInfo);
+        return Objects.hash(requestId, userId, dateTime, srcIp, dstIp, natIp, bytes, abnInfo, srcPort, dstPort);
     }
 }

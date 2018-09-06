@@ -7,8 +7,15 @@ import java.util.Collection;
 
 public interface ReportDao {
 
-    public void save(Integer requestId, Integer userId, LocalDateTime dateTime, Long srcIp, Long dstIp,
-                     Long natIp, Integer bytes);
+    public void save(Integer requestId
+            , Integer userId
+            , LocalDateTime dateTime
+            , Long srcIp
+            , Long dstIp
+            , Long natIp
+            , Integer srcPort
+            , Integer dstPort
+            , Integer bytes);
 
     public void cleanReport(Integer requestId);
 

@@ -13,6 +13,7 @@ import user.services.getter.services.RequestService;
 import java.io.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.TimeZone;
@@ -248,8 +249,7 @@ public class NfDumpUtil implements Runnable {
                     if (line.contains(" first")) {
                         String[] element = line.split(" ");
                         Long l = Long.valueOf(element[element.length - 3]);
-                        logRaw.setDateTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(l),
-                                TimeZone.getDefault().toZoneId()));
+                        logRaw.setDateTime(LocalDateTime.ofInstant(Instant.ofEpochSecond(l), ZoneId.of("UTC")));
                     }
 
                     line = br.readLine();

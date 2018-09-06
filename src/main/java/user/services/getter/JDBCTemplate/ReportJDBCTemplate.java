@@ -27,20 +27,29 @@ public class ReportJDBCTemplate{
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public void save(Integer requestId, Integer userId, LocalDateTime dateTime, Long srcIp, Long dstIp,
-                     Long natIp, Integer bytes) {
-        String SQL = "INSERT INTO getter_report (request_id, user_id, data_time, SRCADDR, DSTADDR, DOCTETS, NATADDR) " +
-                "VALUES (?, ?, ?, INET_NTOA( ? ), INET_NTOA( ? ), ?, INET_NTOA( ? ))";
+    public void save(Integer requestId
+            , Integer userId
+            , LocalDateTime dateTime
+            , Long srcIp
+            , Long dstIp
+            , Long natIp
+            , Integer srcPort
+            , Integer dstPort
+            , Integer bytes) {
+        String SQL = "INSERT INTO getter_report (request_id, user_id, data_time, SRCADDR, DSTADDR, DOCTETS, NATADDR, " +
+                "SRCPORT, DSTPORT) " +
+                "VALUES (?, ?, ?, INET_NTOA( ? ), INET_NTOA( ? ), ?, INET_NTOA( ? ), ?, ?)";
 
         jdbcTemplate.update(SQL, new Object[]{
-                requestId,
-                userId,
-                dateTime.format(dtf),
-                srcIp,
-                dstIp,
-                bytes,
-                natIp});
-
+                requestId
+                , userId
+                , dateTime.format(dtf)
+                , srcIp
+                , dstIp
+                , bytes
+                , natIp
+                , srcPort
+                , dstPort});
     }
 
     public void cleanReport(Integer requestId) {
@@ -50,7 +59,7 @@ public class ReportJDBCTemplate{
 
     public Collection<Report> getReports(Integer requestId) {
 
-        String SQL = "SELECT request_id, user_id, data_time, SRCADDR, DSTADDR, NATADDR, DOCTETS " +
+        String SQL = "SELECT request_id, user_id, data_time, SRCADDR, DSTADDR, NATADDR, DOCTETS, SRCPORT, DSTPORT " +
                 "FROM getter_report WHERE request_id = ?";
         List<Report> reports ;
         try {
@@ -66,8 +75,10 @@ public class ReportJDBCTemplate{
                             String dstIp = rs.getString("DSTADDR");
                             String natIp = rs.getString("NATADDR");
                             Integer bytes = rs.getInt("DOCTETS");
+                            Integer srcPort = rs.getInt("SRCPORT");
+                            Integer dstPort = rs.getInt("DSTPORT");
 
-                            return new Report(request_id, user_id, time, dstIp, srcIp, natIp, bytes);
+                            return new Report(request_id, user_id, time, dstIp, srcIp, natIp, bytes, srcPort, dstPort);
                         }
                     });
             return new HashSet<>(reports);

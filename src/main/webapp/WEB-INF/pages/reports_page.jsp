@@ -63,6 +63,8 @@
 			<th width="120">Source IP address</th>
 			<th width="120">Nat IP address</th>
             <th width="120">Bytes</th>
+            <th width="30">srcPort</th>
+            <th width="30">dstPort</th>
             <th width="120">Abonent info</th>
         </tr>
         <c:forEach items="${listReports}" var="report">
@@ -73,6 +75,8 @@
                 <td>${report.dstIp}</td>
                 <td>${report.natIp}</td>
                 <td>${report.bytes}</td>
+                <td>${report.srcPort}</td>
+                <td>${report.dstPort}</td>
                 <td>${report.abnInfo}</td>
             </tr>
         </c:forEach>

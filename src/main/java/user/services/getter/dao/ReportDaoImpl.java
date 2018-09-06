@@ -21,9 +21,16 @@ public class ReportDaoImpl implements ReportDao {
     AbonentInfoService abonentInfoService;
 
     @Override
-    public void save(Integer requestId, Integer userId, LocalDateTime dateTime, Long srcIp, Long dstIp,
-                     Long natIp, Integer bytes) {
-        reportJDBCTemplate.save(requestId, userId, dateTime, srcIp, dstIp, natIp, bytes);
+    public void save(Integer requestId
+            , Integer userId
+            , LocalDateTime dateTime
+            , Long srcIp
+            , Long dstIp
+            , Long natIp
+            , Integer srcPort
+            , Integer dstPort
+            , Integer bytes) {
+        reportJDBCTemplate.save(requestId, userId, dateTime, srcIp, dstIp, natIp, srcPort, dstPort, bytes);
     }
 
     @Override

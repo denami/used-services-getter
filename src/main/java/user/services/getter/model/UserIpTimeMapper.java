@@ -48,6 +48,8 @@ public class UserIpTimeMapper implements Runnable {
                 Long dstIP = logRaw.getDstIp();
                 Long srcIP = logRaw.getSrcIp();
                 Long natIp = logRaw.getNatIp();
+                Integer srcPort = logRaw.getSrcPort();
+                Integer dstPort = logRaw.getDstPort();
 
                 Integer userId = userSessionsService.getAccountId(dstIP, logRaw.getDateTime());
 
@@ -64,6 +66,8 @@ public class UserIpTimeMapper implements Runnable {
                         dstIP,
                         srcIP,
                         natIp,
+                        srcPort,
+                        dstPort,
                         logRaw.getDateTime().truncatedTo(ChronoUnit.MINUTES));
                 if (raws.containsKey(userIpDateTime)) {
                     LogInfo logInfo = raws.get(userIpDateTime);
@@ -95,6 +99,8 @@ public class UserIpTimeMapper implements Runnable {
                     , k.srcIp
                     , k.dstIp
                     , k.natIp
+                    , k.getSrcPort()
+                    , k.getDstPort()
                     , raws.get(k).bytes);
         }
     }
@@ -111,13 +117,37 @@ public class UserIpTimeMapper implements Runnable {
         private Long dstIp;
         private Long srcIp;
         private Long natIp;
+        private Integer srcPort;
+        private Integer dstPort;
         private LocalDateTime dateTime;
 
-        public UserIpDateTime(Long dstIp, Long srcIp, Long natIp, LocalDateTime dateTime) {
+        public UserIpDateTime(Long dstIp
+                , Long srcIp
+                , Long natIp
+                , Integer srcPort
+                , Integer dstPort, LocalDateTime dateTime) {
             this.dstIp = dstIp;
             this.srcIp = srcIp;
             this.natIp = natIp;
             this.dateTime = dateTime;
+            this.srcPort = srcPort;
+            this.dstPort = dstPort;
+        }
+
+        public Integer getSrcPort() {
+            return srcPort;
+        }
+
+        public void setSrcPort(Integer srcPort) {
+            this.srcPort = srcPort;
+        }
+
+        public Integer getDstPort() {
+            return dstPort;
+        }
+
+        public void setDstPort(Integer dstPort) {
+            this.dstPort = dstPort;
         }
 
         public Long getDstIp() {
@@ -160,12 +190,14 @@ public class UserIpTimeMapper implements Runnable {
             return Objects.equals(dstIp, that.dstIp) &&
                     Objects.equals(srcIp, that.srcIp) &&
                     Objects.equals(natIp, that.natIp) &&
+                    Objects.equals(srcPort, that.srcPort) &&
+                    Objects.equals(dstPort, that.dstPort) &&
                     Objects.equals(dateTime, that.dateTime);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(dstIp, srcIp, natIp, dateTime);
+            return Objects.hash(dstIp, srcIp, natIp, dateTime, srcPort, dstPort);
         }
     }
 

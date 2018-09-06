@@ -16,9 +16,16 @@ public class ReportServiceImpl implements ReportService {
     ReportDao reportDao;
 
     @Override
-    public void save(Integer requestId, Integer userId, LocalDateTime dateTime, Long srcIp, Long dstIp,
-                     Long natIp, Integer bytes) {
-        reportDao.save(requestId, userId, dateTime, srcIp, dstIp, natIp, bytes);
+    public void save(Integer requestId
+            , Integer userId
+            , LocalDateTime dateTime
+            , Long srcIp
+            , Long dstIp
+            , Long natIp
+            , Integer srcPort
+            , Integer dstPort
+            , Integer bytes) {
+        reportDao.save(requestId, userId, dateTime, srcIp, dstIp, natIp, srcPort, dstPort, bytes);
     }
 
     @Override
