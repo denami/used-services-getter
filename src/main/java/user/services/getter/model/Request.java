@@ -20,9 +20,11 @@ public class Request implements Comparable<Request> {
 
     private Collection<String> requestedIpAddress;
     private Collection<String> requestedDomainAddress;
+    private Collection<String> requestedPorts;
 
     private String requestedIpAddressComaList;
     private String requestedDomainAddressComaList;
+    private String requestedPortsComaList;
 
     public Integer getId() {
         return id;
@@ -69,6 +71,19 @@ public class Request implements Comparable<Request> {
         this.requestedIpAddressComaList = getRequestedIpAddressComaList();
     }
 
+    public Collection<String> getRequestedPorts() {
+        return requestedPorts;
+    }
+
+    public void setRequestedPorts(Collection<String> requestedPorts){
+        this.requestedPorts = requestedPorts;
+        this.requestedPortsComaList = getRequestedPortsComaList();
+    }
+
+    public String getRequestedPortsComaList() {
+        return String.join(",", requestedPorts);
+    }
+
     public Collection<String> getRequestedDomainAddress() {
         return requestedDomainAddress;
     }
@@ -98,8 +113,9 @@ public class Request implements Comparable<Request> {
                 ", status=" + status +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +
-                ", requestedIpAddress=" + requestedIpAddressComaList +
-                ", requestedDomainAddress=" + requestedDomainAddressComaList +
+                ", requestedIpAddress=" + requestedIpAddress +
+                ", requestedDomainAddress=" + requestedDomainAddress +
+                ", requestedPorts=" + requestedPorts +
                 '}';
     }
 
@@ -114,12 +130,20 @@ public class Request implements Comparable<Request> {
                 Objects.equals(startDate, request.startDate) &&
                 Objects.equals(endDate, request.endDate) &&
                 Objects.equals(requestedIpAddress, request.requestedIpAddress) &&
+                Objects.equals(requestedPorts, request.requestedPorts) &&
                 Objects.equals(requestedDomainAddress, request.requestedDomainAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, createDateTime, status, startDate, endDate, requestedIpAddress, requestedDomainAddress);
+        return Objects.hash(id
+                , createDateTime
+                , status
+                , startDate
+                , endDate
+                , requestedIpAddress
+                , requestedDomainAddress
+                , requestedPorts);
     }
 
     @Override

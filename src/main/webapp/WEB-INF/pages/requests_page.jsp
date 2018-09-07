@@ -61,6 +61,7 @@
             <th width="80">Start date</th>
             <th width="80">End date</th>
             <th width="120">Requested IP address</th>
+            <th width="80">Requested ports</th>
             <th style="display:none;" width="120">Requested domain address</th>
             <th width="120">Status</th>
         </tr>
@@ -71,6 +72,7 @@
                 <td>${request.startDate}</td>
                 <td>${request.endDate}</td>
                 <td>${request.requestedIpAddressComaList}</td>
+                <td>${request.requestedPortsComaList}</td>
                 <td style="display:none;">${request.requestedDomainAddressComaList}</td>
                 <td>${request.status}</td>
             </tr>
@@ -105,6 +107,16 @@
             </td>
             <td>
                 <form:input path="requestedIpAddress"/>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <form:label path="requestedPorts">
+                    <spring:message text="Requested ports"/>
+                </form:label>
+            </td>
+            <td>
+                <form:input path="requestedPorts"/>
             </td>
         </tr>
         <tr style="display:none;">

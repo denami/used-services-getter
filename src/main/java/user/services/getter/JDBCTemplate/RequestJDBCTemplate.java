@@ -46,7 +46,8 @@ public class RequestJDBCTemplate implements RequestService {
                 ",end_date" +
                 ",requested_ip" +
                 ",requested_domains" +
-                ",description FROM getter_request WHERE id = ?";
+                ",description" +
+                ",requested_ports FROM getter_request WHERE id = ?";
         try {
             return jdbcTemplate.queryForObject(SQL, new Object[]{id}, new RequestRowMapper());
         } catch (Exception e) {
@@ -65,14 +66,16 @@ public class RequestJDBCTemplate implements RequestService {
                     ",start_date" +
                     ",end_date" +
                     ",requested_ip" +
-                    ",requested_domains) VALUES (?,?,?,?,?,?)";
+                    ",requested_domains" +
+                    ",requested_ports) VALUES (?,?,?,?,?,?,?)";
             jdbcTemplate.update(SQL,
                     request.getCreateDateTime(),
                     request.getStatus().toString(),
                     request.getStartDate(),
                     request.getEndDate(),
                     request.getRequestedIpAddressComaList(),
-                    request.getRequestedDomainAddressComaList());
+                    request.getRequestedDomainAddressComaList(),
+                    request.getRequestedPortsComaList());
         } else {
             String SQL = "UPDATE getter_request SET " +
                     "create_date_time=?" +
@@ -81,6 +84,7 @@ public class RequestJDBCTemplate implements RequestService {
                     ", end_date = ?" +
                     ", requested_ip = ?" +
                     ", requested_domains = ? " +
+                    ", requested_ports = ? " +
                     "WHERE id = ?";
             jdbcTemplate.update(SQL,
                     request.getCreateDateTime(),
@@ -89,6 +93,7 @@ public class RequestJDBCTemplate implements RequestService {
                     request.getEndDate(),
                     request.getRequestedIpAddressComaList(),
                     request.getRequestedDomainAddressComaList(),
+                    request.getRequestedPortsComaList(),
                     request.getId());
         }
 
@@ -104,44 +109,13 @@ public class RequestJDBCTemplate implements RequestService {
                 ",end_date" +
                 ",requested_ip" +
                 ",requested_domains" +
-                ",description FROM getter_request";
+                ",description" +
+                ",requested_ports FROM getter_request";
 
         Collection<Request> requests = new HashSet<>();
 
         try {
-            requests.addAll(jdbcTemplate.query(SQL, new RowMapper<Request>() {
-                @Override
-                public Request mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    Request request = new Request();
-                    request.setCreateDateTime(rs.getTimestamp("create_date_time").toLocalDateTime());
-                    request.setStartDate(rs.getDate("start_date").toLocalDate());
-                    request.setEndDate(rs.getDate("end_date").toLocalDate());
-                    request.setId(rs.getInt("id"));
-                    request.setStatus(RequestStatus.valueOf(rs.getString("status")));
-
-                    Collection<String> ips = new HashSet<>();
-                    Collection<String> domains = new HashSet<>();
-
-                    String requested_domains = rs.getString("requested_domains");
-                    String requested_ip = rs.getString("requested_ip");
-
-                    if (requested_ip != null ) {
-                        for (String s : rs.getString("requested_ip").split(",")) {
-                            ips.add(s.trim());
-                        }
-                    }
-
-                    if (requested_domains != null) {
-                        for (String s : rs.getString("requested_domains").split(",")) {
-                            domains.add(s.trim());
-                        }
-                    }
-
-                    request.setRequestedDomainAddress(domains);
-                    request.setRequestedIpAddress(ips);
-                    return request;
-                }
-            }));
+            requests.addAll(jdbcTemplate.query(SQL, new RequestRowMapper()));
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage());
         }
@@ -157,7 +131,8 @@ public class RequestJDBCTemplate implements RequestService {
                 ",end_date" +
                 ",requested_ip" +
                 ",requested_domains" +
-                ",description FROM getter_request WHERE create_date_time = ?";
+                ",description" +
+                ",requested_ports FROM getter_request WHERE create_date_time = ?";
         try {
             return jdbcTemplate.queryForObject(SQL, new Object[]{localDateTime.format(dtf)}, new RequestRowMapper());
         } catch (Exception e) {
@@ -175,7 +150,8 @@ public class RequestJDBCTemplate implements RequestService {
                 ",end_date" +
                 ",requested_ip" +
                 ",requested_domains" +
-                ",description FROM getter_request WHERE status = ?";
+                ",description" +
+                ",requested_ports FROM getter_request WHERE status = ?";
         Collection<Request> requests = new HashSet<>();
         try {
             requests.addAll(jdbcTemplate.query(SQL, new Object[]{requestStatus.toString()}, new RequestRowMapper()));
@@ -194,7 +170,8 @@ public class RequestJDBCTemplate implements RequestService {
                 ",end_date" +
                 ",requested_ip" +
                 ",requested_domains" +
-                ",description FROM getter_request WHERE status = ? LIMIT 1";
+                ",description" +
+                ",requested_ports FROM getter_request WHERE status = ? LIMIT 1";
         try {
             return jdbcTemplate.queryForObject(SQL, new Object[]{requestStatus.toString()}, new RequestRowMapper());
         } catch (EmptyResultDataAccessException e) {
@@ -216,24 +193,33 @@ public class RequestJDBCTemplate implements RequestService {
 
             Collection<String> ips = new HashSet<>();
             Collection<String> domains = new HashSet<>();
+            Collection<String> ports = new HashSet<>();
 
             String requested_domains = rs.getString("requested_domains");
             String requested_ip = rs.getString("requested_ip");
+            String requested_ports = rs.getString("requested_ports");
 
             if (requested_ip != null) {
-                for (String s : rs.getString("requested_ip").split(",")) {
+                for (String s : requested_ip.split(",")) {
                     ips.add(s.trim());
                 }
             }
 
             if (requested_domains != null) {
-                for (String s : rs.getString("requested_domains").split(",")) {
+                for (String s : requested_domains.split(",")) {
                     domains.add(s.trim());
+                }
+            }
+
+            if (requested_ports != null) {
+                for (String s : requested_ports.split(",")) {
+                    ports.add(s.trim());
                 }
             }
 
             request.setRequestedDomainAddress(domains);
             request.setRequestedIpAddress(ips);
+            request.setRequestedPorts(ports);
             return request;
         }
     }
