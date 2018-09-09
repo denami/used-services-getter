@@ -58,11 +58,11 @@ public class NfDumpUtil implements Runnable {
         this.dataDir = dataDir;
     }
 
-
     private String getNfDumpPortFilter(Collection<String> ports) {
         if (ports != null && ports.size() > 0) {
-            StringBuilder sb = new StringBuilder("\n");
+            StringBuilder sb = new StringBuilder();
             for (String s : ports) {
+                s=s.trim();
                 if (s.matches("[0-9]*")) {
                     sb.append(" ");
                     sb.append(s);
@@ -70,7 +70,7 @@ public class NfDumpUtil implements Runnable {
                     log.warn("Value {} is not port", s);
                 }
             }
-            if (sb.length() > 2) {
+            if (sb.length() > 0) {
                 return "port in [".concat(sb.toString().concat(" ]"));
             }
         }
@@ -78,43 +78,18 @@ public class NfDumpUtil implements Runnable {
     }
 
     private String getNfDumpIpFilter(Collection<String> ipAddresses) {
-        if (ipAddresses != null && ipAddresses.size()>0) {
-            boolean isFirst = true;
+        if (ipAddresses != null && ipAddresses.size() > 0) {
             StringBuilder sb = new StringBuilder();
-            sb.append("( ");
+
             for (String s : ipAddresses) {
-                if (isFirst) {
-                    sb.append("host " + s);
-                    isFirst = false;
-                } else sb.append(" or host " + s);
-            }
-            sb.append(" )");
-            return sb.toString();
-        }
-        return null;
-    }
-
-    @Deprecated
-    private String getIpGrepString(Collection<String> ipAddresses) {
-        StringBuilder sb = new StringBuilder();
-        Collection<String> grepIps = new HashSet<String>();
-
-        if (ipAddresses != null){
-            for (String s : ipAddresses){
-                Long longIp = ipToLong(s);
-                if (longIp != 0) {
-                    StringBuilder regexpIpElement = new StringBuilder("\\|");
-                    regexpIpElement.append(longIp);
-                    regexpIpElement.append("\\|");
-                    grepIps.add(regexpIpElement.toString());
+                s = s.trim();
+                if (s.length() > 0) {
+                    sb.append(" ");
+                    sb.append(s);
                 }
-            }
-
-            if ( grepIps.size()>0){
-                sb.append("(");
-                sb.append(String.join("|", grepIps));
-                sb.append(")");
-                return sb.toString();
+                if (sb.length() > 0) {
+                    return "host in [".concat(sb.toString().concat(" ]"));
+                }
             }
         }
         return null;
@@ -147,15 +122,21 @@ public class NfDumpUtil implements Runnable {
         Collection<String> ports = request.getRequestedPorts();
         StringBuilder filter = new StringBuilder();
         Collection<LogRaw> logs = new HashSet<>();
-        if (ipAddresses != null && ipAddresses.size()>0){
-            filter.append(getNfDumpIpFilter(ipAddresses));
+        if (ipAddresses != null && ipAddresses.size() > 0) {
+            String ipFilter = getNfDumpIpFilter(ipAddresses);
+            if (ipFilter != null && ipFilter.length() > 0) {
+                filter.append(ipFilter);
+            }
         }
 
-        if (ports != null && ports.size()>0) {
-            if (filter.length()>2) {
-                filter.append("\\n AND \\n");
+        if (ports != null && ports.size() > 0) {
+            String portFilter = getNfDumpPortFilter(ports);
+            if (portFilter != null && portFilter.length() > 0) {
+                if (filter.length() > 0) {
+                    filter.append("\\n AND \\n");
+                }
+                filter.append(portFilter);
             }
-            filter.append(getNfDumpPortFilter(ports));
         }
 
         for (String file : files) {
@@ -319,3 +300,4 @@ public class NfDumpUtil implements Runnable {
         this.request = request;
     }
 }
+
