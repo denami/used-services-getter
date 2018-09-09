@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.TimeZone;
 
 @Component
 @Scope("prototype")
@@ -59,7 +58,26 @@ public class NfDumpUtil implements Runnable {
         this.dataDir = dataDir;
     }
 
-    private String getNfDumpFilter(Collection<String> ipAddresses) {
+
+    private String getNfDumpPortFilter(Collection<String> ports) {
+        if (ports != null && ports.size() > 0) {
+            StringBuilder sb = new StringBuilder("\n");
+            for (String s : ports) {
+                if (s.matches("[0-9]*")) {
+                    sb.append(" ");
+                    sb.append(s);
+                } else {
+                    log.warn("Value {} is not port", s);
+                }
+            }
+            if (sb.length() > 2) {
+                return "port in [".concat(sb.toString().concat(" ]"));
+            }
+        }
+        return null;
+    }
+
+    private String getNfDumpIpFilter(Collection<String> ipAddresses) {
         if (ipAddresses != null && ipAddresses.size()>0) {
             boolean isFirst = true;
             StringBuilder sb = new StringBuilder();
@@ -76,6 +94,7 @@ public class NfDumpUtil implements Runnable {
         return null;
     }
 
+    @Deprecated
     private String getIpGrepString(Collection<String> ipAddresses) {
         StringBuilder sb = new StringBuilder();
         Collection<String> grepIps = new HashSet<String>();
@@ -125,12 +144,18 @@ public class NfDumpUtil implements Runnable {
         request.setStatus(RequestStatus.PARSING);
         requestService.save(request);
         Collection<String> ipAddresses = request.getRequestedIpAddress();
-        String grepIntIpAddresses = "\\|";
-        String filter = "";
+        Collection<String> ports = request.getRequestedPorts();
+        StringBuilder filter = new StringBuilder();
         Collection<LogRaw> logs = new HashSet<>();
-        if (ipAddresses != null){
-            grepIntIpAddresses = getIpGrepString(ipAddresses);
-            filter = getNfDumpFilter(ipAddresses);
+        if (ipAddresses != null && ipAddresses.size()>0){
+            filter.append(getNfDumpIpFilter(ipAddresses));
+        }
+
+        if (ports != null && ports.size()>0) {
+            if (filter.length()>2) {
+                filter.append("\\n AND \\n");
+            }
+            filter.append(getNfDumpPortFilter(ports));
         }
 
         for (String file : files) {
@@ -138,7 +163,7 @@ public class NfDumpUtil implements Runnable {
             String[] commands = {nfDumpParserPath
                     ,dataDir
                     ,file
-                    ,filter
+                    ,filter.toString()
                     ,request.getId().toString()
                     ,tmpDir};
 
